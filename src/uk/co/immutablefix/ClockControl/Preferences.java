@@ -1,3 +1,8 @@
+//
+// Copyright 2012 Shaun Simpson
+// shauns2029@gmail.com
+//
+
 package uk.co.immutablefix.ClockControl;
 
 import android.os.Bundle;

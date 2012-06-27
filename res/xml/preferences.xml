@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <PreferenceCategory 
+        android:title="Settings"
+        android:key="settings_category">
+
+        <EditTextPreference
+            android:key="clock_address"
+            android:title="Clock Address" 
+            android:summary="Define the address of the Clock (name or IP)"
+            android:dialogTitle="Clock Address"
+            android:dialogMessage="Provide a message"    
+            android:defaultValue="192.168.1.101" />
+
+    </PreferenceCategory>
+    
+</PreferenceScreen>

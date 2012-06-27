@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ClockControl</string>
+    <string name="weather_label">Weather</string>
+    <string name="weather_shortcut">Weather Short</string>
+    <string name="preferences_label">Preferences</string>
+    <string name="preferences_shortcut">Preferences Short</string>
+    <string name="quit_label">Quit</string>
+    <string name="quit_shortcut">Quit Short</string>
+    
+</resources>

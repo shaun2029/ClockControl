@@ -6,9 +6,6 @@
 package uk.co.immutablefix.ClockControl;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 
 import android.app.Activity;
 import android.content.Intent;

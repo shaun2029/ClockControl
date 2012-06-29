@@ -6,20 +6,16 @@
 package uk.co.immutablefix.ClockControl;
 
 import java.io.IOException;
-
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.io.InputStream;
+import java.net.URL;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
-
-import uk.co.immutablefix.ClockControl.Preferences;
-
 
 public class WeatherActivity extends Activity {
 	String ipAddress = "192.168.1.101";
@@ -35,18 +31,51 @@ public class WeatherActivity extends Activity {
         
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());		
 		ipAddress = prefs.getString("clock_address", ipAddress);
-
+    } 
+    
+    @Override
+    public void onStart(){
+    	super.onStart();
 		TextView txtWeather = (TextView) findViewById(R.id.txt_weather);	
-
+	
 		try {
 			String reply = udp.getUDPMessage(ipAddress, 44558, "CLOCK:WEATHER");
 			
-			if ((reply != "") && (reply != txtWeather.getText())) txtWeather.setText(reply);
+			txtWeather.setText(reply);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    } 
+		
+		String reply;
+		TextView txtReport;
+		int[] txtId = {R.id.txt_1, R.id.txt_2, R.id.txt_3, R.id.txt_4, R.id.txt_5};
+		int[] imgId = {R.id.img_1, R.id.img_2, R.id.img_3, R.id.img_4, R.id.img_5};
+		
+		ImageView imgWeather;
+		Object content = null;
+		
+		for (int i = 0; i < 5; i++)
+		{
+			try {
+				reply = udp.getUDPMessage(ipAddress, 44558, "CLOCK:WEATHER:" + Integer.toString(i));
+				txtReport = (TextView) findViewById(txtId[i]);
+				txtReport.setText(reply);
+
+				reply = udp.getUDPMessage(ipAddress, 44558, "CLOCK:WEATHERIMAGE:" + Integer.toString(i));			
+				URL url = new URL(reply);
+			    content = url.getContent();
+
+			    InputStream is = (InputStream)content;
+			    Drawable image = Drawable.createFromStream(is, "src");
+			    imgWeather = (ImageView) findViewById(imgId[i]);
+			    imgWeather.setImageDrawable(image);			
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
+		}
+    }
     
     @Override
     public void onDestroy(){

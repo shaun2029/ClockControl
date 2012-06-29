@@ -18,14 +18,13 @@
         	android:id="@+id/img_1"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
-	        android:padding="5dp"
         	android:src="@drawable/ic_launcher" />
 	
 		<TextView
 	        android:id="@+id/txt_1"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:padding="5dp"
+	        android:padding="8dp"
 	        android:text="Updating ..."
 	        android:textAppearance="?android:attr/textAppearanceMedium" />
     </TableRow>
@@ -35,14 +34,13 @@
         	android:id="@+id/img_2"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
-	        android:padding="5dp"
         	android:src="@drawable/ic_launcher" />
 	
 	   	<TextView
 	        android:id="@+id/txt_2"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:padding="5dp"
+	        android:padding="8dp"
 	        android:text="Updating ..."
 	        android:textAppearance="?android:attr/textAppearanceMedium" />
 	</TableRow>
@@ -52,14 +50,13 @@
         	android:id="@+id/img_3"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
-	        android:padding="5dp"
         	android:src="@drawable/ic_launcher" />
 	
 	    <TextView
 	        android:id="@+id/txt_3"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:padding="5dp"
+	        android:padding="8dp"
 	        android:text="Updating ..."
 	        android:textAppearance="?android:attr/textAppearanceMedium" />
    	</TableRow>
@@ -69,14 +66,13 @@
         	android:id="@+id/img_4"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
-	        android:padding="5dp"
         	android:src="@drawable/ic_launcher" />
 	
 	    <TextView
 	        android:id="@+id/txt_4"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:padding="5dp"
+	        android:padding="8dp"
 	        android:text="Updating ..."
 	        android:textAppearance="?android:attr/textAppearanceMedium" />
    	</TableRow>
@@ -86,14 +82,13 @@
         	android:id="@+id/img_5"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
-	        android:padding="5dp"
         	android:src="@drawable/ic_launcher" />
 	
 	    <TextView
 	        android:id="@+id/txt_5"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:padding="5dp"
+	        android:padding="8dp"
 	        android:text="Updating ..."
 	        android:textAppearance="?android:attr/textAppearanceMedium" />
    	</TableRow>

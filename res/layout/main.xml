@@ -9,23 +9,24 @@
         android:id="@+id/txt_playing"
         android:layout_width="wrap_content"
         android:layout_height="70dp"
+        android:layout_marginTop="20dp"
         android:text="Updating ..."
         android:textAppearance="?android:attr/textAppearanceMedium" />
     
     <TableRow>    
         <Button
-	        android:id="@+id/btn_volup"
-	        android:width="160dp"
-	        android:layout_height="wrap_content"
-	        android:textSize="20sp"
-	        android:text="Volume Up" />
-	
-	    <Button
 	        android:id="@+id/btn_voldown"
 	        android:width="160dp"
 	        android:layout_height="wrap_content"
 	        android:textSize="20sp"
 	        android:text="Volume Down" />
+	
+	    <Button
+	        android:id="@+id/btn_volup"
+	        android:width="160dp"
+	        android:layout_height="wrap_content"
+	        android:textSize="20sp"
+	        android:text="Volume Up" />
     </TableRow>
 
     <Button

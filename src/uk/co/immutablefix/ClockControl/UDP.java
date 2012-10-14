@@ -49,7 +49,7 @@ public class UDP extends Object {
 		     	socket.receive(in);
 		     	break;
 		     } catch (IOException e) {
-		     	Log.d("COMMS", "Failed to get reply. Error: " + e.getMessage());
+		     	//  Log.d("COMMS", "Failed to get reply. Error: " + e.getMessage());
 		     }			
 		}
 	     

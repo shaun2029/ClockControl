@@ -36,19 +36,19 @@ public class ClockControlActivity extends Activity {
 
         udp = new UDP();
         
-        Log.d("Events", "Starting ... ");
+        //  Log.d("Events", "Starting ... ");
        
     	
     	final TextView txtPlaying = (TextView) findViewById(R.id.txt_playing);	    
 
-        Button btnVolUp = (Button) findViewById(R.id.btn_volup);
+        Button btnVolUp = (Button) findViewById(R.id.btn_volumeup);
 	    btnVolUp.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				try {
 					udp.sendUDPMessage(ipAddress, 44558, "CLOCK:VOLUP");
-					Log.d("Events", "Next");
+					//  Log.d("Events", "VolUp");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -57,14 +57,14 @@ public class ClockControlActivity extends Activity {
 			}
 		});	
 
-	    Button btnVolDown = (Button) findViewById(R.id.btn_voldown);
+	    Button btnVolDown = (Button) findViewById(R.id.btn_volumedown);
 	    btnVolDown.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				try {
 					udp.sendUDPMessage(ipAddress, 44558, "CLOCK:VOLDOWN");
-					Log.d("Events", "Next");
+					//  Log.d("Events", "VolDown");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -80,7 +80,7 @@ public class ClockControlActivity extends Activity {
 			public void onClick(View v) {
 				try {
 					udp.sendUDPMessage(ipAddress, 44558, "CLOCK:NEXT");
-					Log.d("Events", "Next");
+					//  Log.d("Events", "Next");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -96,7 +96,7 @@ public class ClockControlActivity extends Activity {
 			public void onClick(View v) {
 				try {
 					udp.sendUDPMessage(ipAddress, 44558, "CLOCK:MUSIC");
-					Log.d("Events", "Music");
+					//  Log.d("Events", "Music");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -112,7 +112,7 @@ public class ClockControlActivity extends Activity {
 			public void onClick(View v) {
 				try {
 					udp.sendUDPMessage(ipAddress, 44558, "CLOCK:SLEEP");
-					Log.d("Events", "Sleep");
+					//  Log.d("Events", "Sleep");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -128,7 +128,7 @@ public class ClockControlActivity extends Activity {
 			public void onClick(View v) {
 				try {
 					udp.sendUDPMessage(ipAddress, 44558, "CLOCK:PAUSE");
-					Log.d("Events", "Sleep");
+					//  Log.d("Events", "Sleep");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -157,7 +157,7 @@ public class ClockControlActivity extends Activity {
 
 					if (!paused) {
 						try {
-							Log.d("TREAD", "Getting data ...");
+							//  Log.d("TREAD", "Getting data ...");
 							reply = udp.getUDPMessage(ipAddress, 44558, "CLOCK:PLAYING");
 							
 							// If no reply sleep longer
@@ -183,20 +183,20 @@ public class ClockControlActivity extends Activity {
 		};
 		new Thread(runnable).start();
 
-		Log.d("Events", "Starting ... Fin");
+		//  Log.d("Events", "Starting ... Fin");
     }
     
     public void onStart()
     {
     	super.onStart();
     	
-		Log.d("Events", "onStart");
+		//  Log.d("Events", "onStart");
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		
 		ipAddress = prefs.getString("clock_address", ipAddress);
 		
-		Log.d("Preferences", ipAddress);
+		//  Log.d("Preferences", ipAddress);
 		
 		paused = false;
 	}
@@ -225,7 +225,7 @@ public class ClockControlActivity extends Activity {
     //Handles menu clicks
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-    	Log.d("MENUS", "MENUS");
+    	//  Log.d("MENUS", "MENUS");
     	switch(item.getItemId()) {
     	case R.id.mitmWeather:
     		startActivity(new Intent(this, WeatherActivity.class));

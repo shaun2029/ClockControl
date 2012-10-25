@@ -7,12 +7,36 @@
 
         <EditTextPreference
             android:key="clock_address"
-            android:title="Clock Address" 
-            android:summary="Define the address of the Clock (name or IP)"
-            android:dialogTitle="Clock Address"
-            android:dialogMessage="Provide a message"    
+            android:title="Clock One Address" 
+            android:summary="Define the address of the first Clock (name or IP)"
+            android:dialogTitle="Clock One Address"
+            android:dialogMessage=""    
             android:defaultValue="192.168.1.101" />
 
-    </PreferenceCategory>
+        <EditTextPreference
+            android:key="clock_name"
+            android:title="Clock One Name" 
+            android:summary="Define the name of the first Clock"
+            android:dialogTitle="Clock One Name"
+            android:dialogMessage=""    
+            android:defaultValue="Clock One" />
+        
+        <EditTextPreference
+            android:key="clock2_address"
+            android:title="Clock Two Address" 
+            android:summary="Define the address of the second Clock (name or IP)"
+            android:dialogTitle="Clock Two Address"
+            android:dialogMessage=""    
+            android:defaultValue="192.168.1.102" />
+	
+        <EditTextPreference
+            android:key="clock2_name"
+            android:title="Clock Two Name" 
+            android:summary="Define the name of the second Clock"
+            android:dialogTitle="Clock Two Name"
+            android:dialogMessage=""    
+            android:defaultValue="Clock Two" />
+        
+	</PreferenceCategory>
     
 </PreferenceScreen>

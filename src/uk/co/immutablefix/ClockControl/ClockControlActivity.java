@@ -19,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 public class ClockControlActivity extends Activity {
@@ -37,7 +38,6 @@ public class ClockControlActivity extends Activity {
         udp = new UDP();
         
         //  Log.d("Events", "Starting ... ");
-       
     	
     	final TextView txtPlaying = (TextView) findViewById(R.id.txt_playing);	    
 
@@ -53,7 +53,6 @@ public class ClockControlActivity extends Activity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
 			}
 		});	
 
@@ -69,7 +68,6 @@ public class ClockControlActivity extends Activity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
 			}
 		});	
 	
@@ -85,7 +83,6 @@ public class ClockControlActivity extends Activity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
 			}
 		});	
 	
@@ -101,7 +98,6 @@ public class ClockControlActivity extends Activity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
 			}
 		});	
 	
@@ -117,7 +113,6 @@ public class ClockControlActivity extends Activity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
 			}
 		});	
 	
@@ -134,6 +129,33 @@ public class ClockControlActivity extends Activity {
 					e.printStackTrace();
 				}
 				
+			}
+		});	
+	    
+	    RadioButton rbtnClock1 = (RadioButton) findViewById(R.id.radioButton1);
+	    RadioButton rbtnClock2 = (RadioButton) findViewById(R.id.radioButton2);	    
+	    
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		
+		rbtnClock1.setText(prefs.getString("clock_name", (String) rbtnClock1.getText()));
+		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
+		
+	    rbtnClock1.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+				ipAddress = prefs.getString("clock_address", ipAddress);
+				
+			}
+		});	
+	    
+	    rbtnClock2.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+				ipAddress = prefs.getString("clock2_address", ipAddress);
 			}
 		});	
 

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:android1="http://schemas.android.com/apk/res/android"
     android:layout_width="320dp"
     android:layout_height="480dp"
-    android:layout_gravity="center" 
+    android:layout_gravity="center"
     android:orientation="vertical" >
 
     <TextView
@@ -12,14 +13,14 @@
         android:layout_marginTop="25dp"
         android:text="Updating ..."
         android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-    <TableRow>    
+
+    <TableRow>
         <Button
-	        android:id="@+id/btn_volumedown"
-	        android:width="160dp"
-	        android:layout_height="wrap_content"
-	        android:textSize="20sp"
-	        android:text="Volume Down" />
+            android:id="@+id/btn_volumedown"
+            android:width="160dp"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="Volume Down" />
 	
 	    <Button
 	        android:id="@+id/btn_volumeup"
@@ -56,5 +57,25 @@
         android:layout_height="wrap_content"
 	    android:textSize="24sp"
         android:text="Pause" />
+
+    <TableRow>  
+        <RadioGroup>  
+
+		    <RadioButton
+		        android:id="@+id/radioButton1"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Clock 1"
+		        android:textSize="24sp"
+		        android1:checked="true" />
+		    	 
+		    <RadioButton
+		        android:id="@+id/radioButton2"
+        		android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:textSize="24sp"
+		    	android:text="Clock 2" />   
+	    </RadioGroup> 
+    </TableRow>
     
 </TableLayout>

@@ -23,10 +23,11 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 public class ClockControlActivity extends Activity {
-	String ipAddress = "192.168.1.101";
+	String hostname = "";
 	String weather = "";
 	Boolean running = true, paused = true;
 
+	DnssdDiscovery dns;
 	UDP udp;
 
     /** Called when the activity is first created. */
@@ -34,8 +35,12 @@ public class ClockControlActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
+       
+        dns = new DnssdDiscovery(getBaseContext());
+        dns.init();
+        
         udp = new UDP();
+        
         
         //  Log.d("Events", "Starting ... ");
     	
@@ -47,7 +52,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					udp.sendUDPMessage(ipAddress, 44558, "CLOCK:VOLUP");
+					udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:VOLUP");
 					//  Log.d("Events", "VolUp");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -62,7 +67,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					udp.sendUDPMessage(ipAddress, 44558, "CLOCK:VOLDOWN");
+					udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:VOLDOWN");
 					//  Log.d("Events", "VolDown");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -77,7 +82,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					udp.sendUDPMessage(ipAddress, 44558, "CLOCK:NEXT");
+					udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:NEXT");
 					//  Log.d("Events", "Next");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -92,7 +97,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					udp.sendUDPMessage(ipAddress, 44558, "CLOCK:MUSIC");
+					udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:MUSIC");
 					//  Log.d("Events", "Music");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -107,7 +112,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					udp.sendUDPMessage(ipAddress, 44558, "CLOCK:SLEEP");
+					udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:SLEEP");
 					//  Log.d("Events", "Sleep");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -122,7 +127,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					udp.sendUDPMessage(ipAddress, 44558, "CLOCK:MEDITATION");
+					udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:MEDITATION");
 					//  Log.d("Events", "Meditation");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -137,7 +142,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					udp.sendUDPMessage(ipAddress, 44558, "CLOCK:PAUSE");
+					udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:PAUSE");
 					//  Log.d("Events", "Sleep");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -160,7 +165,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-				ipAddress = prefs.getString("clock_address", ipAddress);
+				hostname = prefs.getString("clock_address", hostname);
 				
 			}
 		});	
@@ -170,7 +175,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-				ipAddress = prefs.getString("clock2_address", ipAddress);
+				hostname = prefs.getString("clock2_address", hostname);
 			}
 		});	
 
@@ -181,7 +186,7 @@ public class ClockControlActivity extends Activity {
 		    
 			@Override
 			public void run() {
-				int time = 2000;
+				int time = 500;
 				
 				while (running) {
 			    	
@@ -195,7 +200,7 @@ public class ClockControlActivity extends Activity {
 					if (!paused) {
 						try {
 							//  Log.d("TREAD", "Getting data ...");
-							reply = udp.getUDPMessage(ipAddress, 44558, "CLOCK:PLAYING");
+							reply = udp.getUDPMessage(getBaseContext(), getTargetIp(hostname), 44558, "CLOCK:PLAYING");
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -224,7 +229,7 @@ public class ClockControlActivity extends Activity {
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		
-		ipAddress = prefs.getString("clock_address", ipAddress);
+		hostname = prefs.getString("clock_address", hostname);
 		
 		//  Log.d("Preferences", ipAddress);
 		
@@ -277,4 +282,9 @@ public class ClockControlActivity extends Activity {
     	running = false;
     	udp.close();
     }
+    
+    @SuppressWarnings("deprecation")
+	private String getTargetIp(String host) {
+        return dns.getHostAddress(host);
+    }    
 }

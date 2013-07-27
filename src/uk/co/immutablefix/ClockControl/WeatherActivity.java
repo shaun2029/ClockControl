@@ -39,7 +39,7 @@ public class WeatherActivity extends Activity {
 		TextView txtWeather = (TextView) findViewById(R.id.txt_weather);	
 	
 		try {
-			String reply = udp.getUDPMessage(ipAddress, 44558, "CLOCK:WEATHER");
+			String reply = udp.getUDPMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHER");
 			
 			txtWeather.setText(reply);
 		} catch (IOException e) {
@@ -58,11 +58,11 @@ public class WeatherActivity extends Activity {
 		for (int i = 0; i < 5; i++)
 		{
 			try {
-				reply = udp.getUDPMessage(ipAddress, 44558, "CLOCK:WEATHER:" + Integer.toString(i));
+				reply = udp.getUDPMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHER:" + Integer.toString(i));
 				txtReport = (TextView) findViewById(txtId[i]);
 				txtReport.setText(reply);
 
-				reply = udp.getUDPMessage(ipAddress, 44558, "CLOCK:WEATHERIMAGE:" + Integer.toString(i));			
+				reply = udp.getUDPMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHERIMAGE:" + Integer.toString(i));			
 				URL url = new URL(reply);
 			    content = url.getContent();
 

@@ -164,6 +164,8 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
+				txtPlaying.setText("Updating ...");
+
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 				hostname = prefs.getString("clock_address", hostname);
 				
@@ -174,6 +176,8 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
+				txtPlaying.setText("Updating ...");
+				
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 				hostname = prefs.getString("clock2_address", hostname);
 			}
@@ -247,7 +251,7 @@ public class ClockControlActivity extends Activity {
 	    RadioButton rbtnClock1 = (RadioButton) findViewById(R.id.radioButton1);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 	    
-    	if (rbtnClock1.hasSelection())
+    	if (rbtnClock1.isChecked())
     		hostname = prefs.getString("clock1_address", hostname);
     	else
     		hostname = prefs.getString("clock2_address", hostname);
@@ -291,7 +295,6 @@ public class ClockControlActivity extends Activity {
     	udp.close();
     }
     
-    @SuppressWarnings("deprecation")
 	private String getTargetIp(String host) {
         return dns.getHostAddress(host);
     }    

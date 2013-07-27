@@ -244,6 +244,14 @@ public class ClockControlActivity extends Activity {
     
     public void onReStart()
     {
+	    RadioButton rbtnClock1 = (RadioButton) findViewById(R.id.radioButton1);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+	    
+    	if (rbtnClock1.hasSelection())
+    		hostname = prefs.getString("clock1_address", hostname);
+    	else
+    		hostname = prefs.getString("clock2_address", hostname);
+    	
     	super.onRestart();   	
     	paused = false;
     }

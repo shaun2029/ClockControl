@@ -1,4 +1,5 @@
-// Copyright 2012 Shaun Simpson
+// Copyright 2012 Rémi Emonet and Shaun Simpson.
+// Thanks to Rémi Emonet for his work.
 
 package uk.co.immutablefix.ClockControl;
 

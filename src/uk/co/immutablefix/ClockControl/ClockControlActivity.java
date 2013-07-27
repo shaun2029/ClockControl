@@ -116,6 +116,21 @@ public class ClockControlActivity extends Activity {
 			}
 		});	
 	
+	    Button btnMeditation = (Button) findViewById(R.id.btn_meditation);
+	    btnMeditation.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				try {
+					udp.sendUDPMessage(ipAddress, 44558, "CLOCK:MEDITATION");
+					//  Log.d("Events", "Meditation");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});	
+
 	    Button btnPause = (Button) findViewById(R.id.btn_pause);
 	    btnPause.setOnClickListener(new View.OnClickListener() {
 			
@@ -181,13 +196,6 @@ public class ClockControlActivity extends Activity {
 						try {
 							//  Log.d("TREAD", "Getting data ...");
 							reply = udp.getUDPMessage(ipAddress, 44558, "CLOCK:PLAYING");
-							
-							// If no reply sleep longer
-							if (reply == ""){
-								time = 30000;
-							} else {
-								time = 2000;
-							}
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();

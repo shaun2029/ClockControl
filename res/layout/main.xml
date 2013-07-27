@@ -30,13 +30,22 @@
 	        android:text="Volume Up" />
     </TableRow>
 
-    <Button
-        android:id="@+id/btn_next"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-	    android:textSize="24sp"
-        android:text="Next Song" />
-    
+    <TableRow>
+	    <Button
+	        android:id="@+id/btn_pause"
+	        android:layout_width="160dp"
+	        android:layout_height="wrap_content"
+		    android:textSize="24sp"
+	        android:text="Play/Pause" />
+        
+	    <Button
+	        android:id="@+id/btn_next"
+	        android:layout_width="160dp"
+	        android:layout_height="wrap_content"
+		    android:textSize="24sp"
+	        android:text="Next Song" />
+    </TableRow>
+	    	
     <Button
         android:id="@+id/btn_music"
         android:layout_width="match_parent"
@@ -52,12 +61,12 @@
         android:text="Sleep" />
     
     <Button
-        android:id="@+id/btn_pause"
+        android:id="@+id/btn_meditation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 	    android:textSize="24sp"
-        android:text="Pause" />
-
+        android:text="Meditation" />
+    
     <TableRow>  
         <RadioGroup>  
 

@@ -29,6 +29,9 @@ public class ClockControlActivity extends Activity {
 
 	DnssdDiscovery dns;
 	UDP udp;
+	
+	Button btnVolDown, btnVolUp;
+	RadioButton rbtnClock1;
 
     /** Called when the activity is first created. */
     @Override
@@ -46,7 +49,7 @@ public class ClockControlActivity extends Activity {
     	
     	final TextView txtPlaying = (TextView) findViewById(R.id.txt_playing);	    
 
-        Button btnVolUp = (Button) findViewById(R.id.btn_volumeup);
+        btnVolUp = (Button) findViewById(R.id.btn_volumeup);
 	    btnVolUp.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -61,7 +64,7 @@ public class ClockControlActivity extends Activity {
 			}
 		});	
 
-	    Button btnVolDown = (Button) findViewById(R.id.btn_volumedown);
+	    btnVolDown = (Button) findViewById(R.id.btn_volumedown);
 	    btnVolDown.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -152,16 +155,15 @@ public class ClockControlActivity extends Activity {
 			}
 		});	
 	    
-	    RadioButton rbtnClock1 = (RadioButton) findViewById(R.id.radioButton1);
+	    rbtnClock1 = (RadioButton) findViewById(R.id.radioButton1);
 	    RadioButton rbtnClock2 = (RadioButton) findViewById(R.id.radioButton2);	    
 	    
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		
 		rbtnClock1.setText(prefs.getString("clock_name", (String) rbtnClock1.getText()));
 		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
-		
-	    rbtnClock1.setOnClickListener(new View.OnClickListener() {
-			
+	
+	    rbtnClock1.setOnClickListener(new View.OnClickListener() {	
 			@Override
 			public void onClick(View v) {
 				txtPlaying.setText("Updating ...");
@@ -170,7 +172,7 @@ public class ClockControlActivity extends Activity {
 				hostname = prefs.getString("clock_address", hostname);
 				
 			}
-		});	
+		});			
 	    
 	    rbtnClock2.setOnClickListener(new View.OnClickListener() {
 			
@@ -190,7 +192,7 @@ public class ClockControlActivity extends Activity {
 		    
 			@Override
 			public void run() {
-				int time = 500;
+				int time = 400;
 				
 				while (running) {
 			    	
@@ -203,8 +205,19 @@ public class ClockControlActivity extends Activity {
 
 					if (!paused) {
 						try {
-							//  Log.d("TREAD", "Getting data ...");
-							reply = udp.getUDPMessage(getBaseContext(), getTargetIp(hostname), 44558, "CLOCK:PLAYING");
+							if (btnVolUp.isPressed())
+							{
+								udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:VOLUP");
+							}
+							else if (btnVolDown.isPressed())
+							{
+								udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:VOLDOWN");
+							}
+							else
+							{
+								//  Log.d("TREAD", "Getting data ...");
+								reply = udp.getUDPMessage(getBaseContext(), getTargetIp(hostname), 44558, "CLOCK:PLAYING");
+							}
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -248,7 +261,6 @@ public class ClockControlActivity extends Activity {
     
     public void onReStart()
     {
-	    RadioButton rbtnClock1 = (RadioButton) findViewById(R.id.radioButton1);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 	    
     	if (rbtnClock1.isChecked())

@@ -91,8 +91,6 @@ public class DnssdDiscovery extends Object {
             }
             jmdns = null;
     	}
-    	//repo.stop();
-        //s.stop();
         lock.release();
     }
     

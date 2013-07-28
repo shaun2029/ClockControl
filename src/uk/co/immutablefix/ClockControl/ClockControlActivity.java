@@ -31,7 +31,9 @@ public class ClockControlActivity extends Activity {
 	UDP udp;
 	
 	Button btnVolDown, btnVolUp;
-	RadioButton rbtnClock1;
+	RadioButton rbtnClock1, rbtnClock2;
+	SharedPreferences prefs = null;
+	
 
     /** Called when the activity is first created. */
     @Override
@@ -55,7 +57,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:VOLUP");
+					udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLUP");
 					//  Log.d("Events", "VolUp");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -70,7 +72,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:VOLDOWN");
+					udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLDOWN");
 					//  Log.d("Events", "VolDown");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -85,7 +87,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:NEXT");
+					udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:NEXT");
 					//  Log.d("Events", "Next");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -100,7 +102,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:MUSIC");
+					udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:MUSIC");
 					//  Log.d("Events", "Music");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -115,7 +117,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:SLEEP");
+					udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:SLEEP");
 					//  Log.d("Events", "Sleep");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -130,7 +132,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:MEDITATION");
+					udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:MEDITATION");
 					//  Log.d("Events", "Meditation");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -145,7 +147,7 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:PAUSE");
+					udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:PAUSE");
 					//  Log.d("Events", "Sleep");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -156,9 +158,9 @@ public class ClockControlActivity extends Activity {
 		});	
 	    
 	    rbtnClock1 = (RadioButton) findViewById(R.id.radioButton1);
-	    RadioButton rbtnClock2 = (RadioButton) findViewById(R.id.radioButton2);	    
+	    rbtnClock2 = (RadioButton) findViewById(R.id.radioButton2);	    
 	    
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		
 		rbtnClock1.setText(prefs.getString("clock_name", (String) rbtnClock1.getText()));
 		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
@@ -192,7 +194,7 @@ public class ClockControlActivity extends Activity {
 		    
 			@Override
 			public void run() {
-				int time = 400;
+				int time = 500;
 				
 				while (running) {
 			    	
@@ -207,16 +209,16 @@ public class ClockControlActivity extends Activity {
 						try {
 							if (btnVolUp.isPressed())
 							{
-								udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:VOLUP");
+								udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLUP");
 							}
 							else if (btnVolDown.isPressed())
 							{
-								udp.sendUDPMessage(getTargetIp(hostname), 44558, "CLOCK:VOLDOWN");
+								udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLDOWN");
 							}
 							else
 							{
 								//  Log.d("TREAD", "Getting data ...");
-								reply = udp.getUDPMessage(getBaseContext(), getTargetIp(hostname), 44558, "CLOCK:PLAYING");
+								reply = udp.getUDPMessage(getBaseContext(), getTargetIp(), 44558, "CLOCK:PLAYING");
 							}
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
@@ -244,8 +246,6 @@ public class ClockControlActivity extends Activity {
     	
 		//  Log.d("Events", "onStart");
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-		
 		hostname = prefs.getString("clock_address", hostname);
 		
 		//  Log.d("Preferences", ipAddress);
@@ -261,13 +261,9 @@ public class ClockControlActivity extends Activity {
     
     public void onReStart()
     {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-	    
-    	if (rbtnClock1.isChecked())
-    		hostname = prefs.getString("clock1_address", hostname);
-    	else
-    		hostname = prefs.getString("clock2_address", hostname);
-    	
+		rbtnClock1.setText(prefs.getString("clock_name", (String) rbtnClock1.getText()));
+		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
+		
     	super.onRestart();   	
     	paused = false;
     }
@@ -307,7 +303,11 @@ public class ClockControlActivity extends Activity {
     	udp.close();
     }
     
-	private String getTargetIp(String host) {
-        return dns.getHostAddress(host);
+	private String getTargetIp() {
+    	if (rbtnClock1.isChecked())
+    		hostname = prefs.getString("clock1_address", hostname);
+    	else
+    		hostname = prefs.getString("clock2_address", hostname);
+        return dns.getHostAddress(hostname);
     }    
 }

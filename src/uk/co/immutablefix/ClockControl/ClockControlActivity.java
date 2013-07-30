@@ -50,7 +50,6 @@ public class ClockControlActivity extends Activity {
         //  Log.d("Events", "Starting ... ");
     	
     	final TextView txtPlaying = (TextView) findViewById(R.id.txt_playing);	    
-
         btnVolUp = (Button) findViewById(R.id.btn_volumeup);
 	    btnVolUp.setOnClickListener(new View.OnClickListener() {
 			
@@ -236,7 +235,6 @@ public class ClockControlActivity extends Activity {
 			}
 		};
 		new Thread(runnable).start();
-
 		//  Log.d("Events", "Starting ... Fin");
     }
     
@@ -261,8 +259,8 @@ public class ClockControlActivity extends Activity {
     
     public void onReStart()
     {
-		rbtnClock1.setText(prefs.getString("clock_name", (String) rbtnClock1.getText()));
-		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
+//		rbtnClock1.setText(prefs.getString("clock_name", (String) rbtnClock1.getText()));
+//		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
 		
     	super.onRestart();   	
     	paused = false;

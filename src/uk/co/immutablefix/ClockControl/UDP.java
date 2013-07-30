@@ -68,7 +68,7 @@ public class UDP extends Object {
 		    }
 		    
 		} catch (IOException e) {
-			Log.d("COMMS", "Failed to resolve address. Error: " + e.getMessage());
+			//Log.d("COMMS", "Failed to resolve address. Error: " + e.getMessage());
 		}
 		return "";
 	}

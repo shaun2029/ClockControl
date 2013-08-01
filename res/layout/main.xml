@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="320dp"
-    android:layout_height="480dp"
+    android:layout_height="420dp"
+    android:padding="5dp"
     android:layout_gravity="center"
     android:orientation="vertical" >
 
     <TextView
         android:id="@+id/txt_playing"
-        android:layout_width="wrap_content"
-        android:layout_height="70dp"
-        android:layout_marginTop="25dp"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
         android:text="Updating ..."
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <TableRow>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        
         <Button
             android:id="@+id/btn_volumedown"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0.50"            
             android:text="Volume Down"
             android:textSize="20sp"
             android:width="160dp" />
@@ -27,29 +31,35 @@
 	        android:id="@+id/btn_volumeup"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:text="Volume Up"
+            android:layout_weight="0.50"
+            android:text="Volume Up"
 	        android:textSize="20sp"
 	        android:width="160dp" />
 
-    </TableRow>
+    </LinearLayout>
 
-    <TableRow>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        
 	    <Button
 	        android:id="@+id/btn_pause"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:text="Play/Pause"
+            android:layout_weight="0.50"
+            android:text="Play/Pause"
 	        android:textSize="24sp" />
         
 	    <Button
 	        android:id="@+id/btn_next"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+            android:layout_weight="0.50"	        
 	        android:text="Next Song"
 	        android:textSize="24sp" />
 
-    </TableRow>
+    </LinearLayout>
 	    	
     <Button
         android:id="@+id/btn_music"
@@ -72,9 +82,15 @@
 	    android:textSize="24sp"
         android:text="Meditation" />
     
-    <TableRow>  
-        <RadioGroup>  
-
+    <LinearLayout  
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        
+        <RadioGroup  
+	        android:layout_width="match_parent"
+    	    android:layout_height="wrap_content">
+    	    
 		    <RadioButton
 		        android:id="@+id/radioButton1"
 		        android:layout_width="match_parent"
@@ -90,6 +106,6 @@
 		        android:textSize="24sp"
 		    	android:text="Clock 2" />   
 	    </RadioGroup> 
-    </TableRow>
+    </LinearLayout>
     
-</TableLayout>
+</LinearLayout>

@@ -10,10 +10,8 @@ import java.io.InputStream;
 import java.net.URL;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,28 +23,23 @@ public class WeatherActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        Bundle bundle = this.getIntent().getExtras();
+        
+        if(bundle !=null)
+        {
+        	ipAddress = bundle.getString("ipAddress"); 
+        }
+        
         setContentView(R.layout.weather);
 
         udp = new UDP();
-        
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());		
-		ipAddress = prefs.getString("clock_address", ipAddress);
     } 
     
     @Override
     public void onStart(){
     	super.onStart();
 		TextView txtWeather = (TextView) findViewById(R.id.txt_weather);	
-	
-		try {
-			String reply = udp.getUDPMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHER");
-			
-			txtWeather.setText(reply);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		String reply;
 		TextView txtReport;
 		int[] txtId = {R.id.txt_1, R.id.txt_2, R.id.txt_3, R.id.txt_4, R.id.txt_5};
@@ -54,6 +47,28 @@ public class WeatherActivity extends Activity {
 		
 		ImageView imgWeather;
 		Object content = null;
+	
+		try {
+			reply = udp.getUDPMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHER");
+			if (reply == "") return;
+			
+			txtWeather.setText(reply);
+			
+			reply = udp.getUDPMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHERIMAGE:0");			
+			if (reply == "") return;
+
+			URL url = new URL(reply);
+		    content = url.getContent();
+
+		    InputStream is = (InputStream)content;
+		    Drawable image = Drawable.createFromStream(is, "src");
+		    imgWeather = (ImageView) findViewById(R.id.img_0);
+		    imgWeather.setImageDrawable(image);			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		for (int i = 0; i < 5; i++)
 		{
@@ -81,6 +96,5 @@ public class WeatherActivity extends Activity {
     public void onDestroy(){
     	super.onDestroy();
     	udp.close();
-    }
-    
+    }    
  }

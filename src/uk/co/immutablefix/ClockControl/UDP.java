@@ -20,7 +20,7 @@ public class UDP extends Object {
 
 	public void open() throws java.io.IOException {
     	socket = new DatagramSocket();
-		socket.setSoTimeout(1000);
+		socket.setSoTimeout(500);
 	}
 
 	public void close() {
@@ -50,7 +50,7 @@ public class UDP extends Object {
 		
 			byte[] reply = new byte[1500];
 			DatagramPacket in = new DatagramPacket(reply, reply.length);
-		             
+/*		             
 			for (i = 0; i < 3; i++){
 				try {
 					socket.send(out);
@@ -66,7 +66,16 @@ public class UDP extends Object {
 		    } else { 
 		    	return "";
 		    }
-		    
+*/
+			try {
+				socket.send(out);
+		     	socket.receive(in);
+		    } catch (IOException e) {
+		     	//  Log.d("COMMS", "Failed to get reply. Error: " + e.getMessage());
+		    	return "";
+		    }
+			
+	    	return new String(reply, 0, in.getLength());
 		} catch (IOException e) {
 			//Log.d("COMMS", "Failed to resolve address. Error: " + e.getMessage());
 		}

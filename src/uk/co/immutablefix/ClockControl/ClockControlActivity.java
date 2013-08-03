@@ -241,13 +241,8 @@ public class ClockControlActivity extends Activity {
     public void onStart()
     {
     	super.onStart();
-    	
-		//  Log.d("Events", "onStart");
-
-		hostname = prefs.getString("clock_address", hostname);
-		
-		//  Log.d("Preferences", ipAddress);
-		
+		rbtnClock1.setText(prefs.getString("clock_name", (String) rbtnClock1.getText()));
+		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
 		paused = false;
 	}
     
@@ -259,10 +254,9 @@ public class ClockControlActivity extends Activity {
     
     public void onReStart()
     {
-//		rbtnClock1.setText(prefs.getString("clock_name", (String) rbtnClock1.getText()));
-//		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
-		
     	super.onRestart();   	
+		rbtnClock1.setText(prefs.getString("clock_name", (String) rbtnClock1.getText()));
+		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
     	paused = false;
     }
     
@@ -278,10 +272,13 @@ public class ClockControlActivity extends Activity {
     //Handles menu clicks
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-    	//  Log.d("MENUS", "MENUS");
     	switch(item.getItemId()) {
     	case R.id.mitmWeather:
-    		startActivity(new Intent(this, WeatherActivity.class));
+    		Bundle basket = new Bundle();
+    		basket.putString("ipAddress", getTargetIp());
+    		Intent weather = new Intent(this, WeatherActivity.class);
+    		weather.putExtras(basket);    		
+    		startActivity(weather);
     		return true;
     	case R.id.mitmPreferences:
     		startActivity(new Intent(this, Preferences.class));
@@ -303,9 +300,9 @@ public class ClockControlActivity extends Activity {
     
 	private String getTargetIp() {
     	if (rbtnClock1.isChecked())
-    		hostname = prefs.getString("clock1_address", hostname);
+    		hostname = prefs.getString("clock1_address", hostname).toLowerCase();
     	else
-    		hostname = prefs.getString("clock2_address", hostname);
+    		hostname = prefs.getString("clock2_address", hostname).toLowerCase();
         return dns.getHostAddress(hostname);
     }    
 }

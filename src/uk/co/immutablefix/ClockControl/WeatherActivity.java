@@ -50,12 +50,12 @@ public class WeatherActivity extends Activity {
 	
 		try {
 			reply = udp.getUDPMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHER");
-			if (reply == "") return;
+			if (reply.length() == 0) return;
 			
 			txtWeather.setText(reply);
 			
 			reply = udp.getUDPMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHERIMAGE:0");			
-			if (reply == "") return;
+			if (reply.length() == 0) return;
 
 			URL url = new URL(reply);
 		    content = url.getContent();

@@ -37,7 +37,7 @@ public class DnssdDiscovery extends Object {
             public void run() {
                 setUp();
             }
-            }, 1);
+            }, 500);
 
     }    
 

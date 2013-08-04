@@ -161,7 +161,7 @@ public class ClockControlActivity extends Activity {
 	    
 		prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		
-		rbtnClock1.setText(prefs.getString("clock_name", (String) rbtnClock1.getText()));
+		rbtnClock1.setText(prefs.getString("clock1_name", (String) rbtnClock1.getText()));
 		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
 	
 	    rbtnClock1.setOnClickListener(new View.OnClickListener() {	
@@ -170,7 +170,7 @@ public class ClockControlActivity extends Activity {
 				txtPlaying.setText("Updating ...");
 
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-				hostname = prefs.getString("clock_address", hostname);
+				hostname = prefs.getString("clock1_address", hostname);
 				
 			}
 		});			
@@ -228,7 +228,8 @@ public class ClockControlActivity extends Activity {
 					handler.post(new Runnable() {
 						@Override
 						public void run() {
-							if ((reply != "") && (reply != txtPlaying.getText())) txtPlaying.setText(reply);
+							if ((reply.length() > 0) && (!reply.equals(txtPlaying.getText()))) 
+								txtPlaying.setText(reply);
 						}
 					});
 				}
@@ -241,8 +242,10 @@ public class ClockControlActivity extends Activity {
     public void onStart()
     {
     	super.onStart();
-		rbtnClock1.setText(prefs.getString("clock_name", (String) rbtnClock1.getText()));
+
+		rbtnClock1.setText(prefs.getString("clock1_name", (String) rbtnClock1.getText()));
 		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
+
 		paused = false;
 	}
     
@@ -255,8 +258,6 @@ public class ClockControlActivity extends Activity {
     public void onReStart()
     {
     	super.onRestart();   	
-		rbtnClock1.setText(prefs.getString("clock_name", (String) rbtnClock1.getText()));
-		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
     	paused = false;
     }
     

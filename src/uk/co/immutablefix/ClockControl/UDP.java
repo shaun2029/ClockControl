@@ -11,8 +11,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 import android.content.Context;
-import android.net.wifi.WifiManager;
-import android.net.wifi.WifiManager.MulticastLock;
 import android.util.Log;
 
 public class UDP extends Object {
@@ -20,7 +18,7 @@ public class UDP extends Object {
 
 	public void open() throws java.io.IOException {
     	socket = new DatagramSocket();
-		socket.setSoTimeout(500);
+		socket.setSoTimeout(6000);
 	}
 
 	public void close() {
@@ -40,6 +38,7 @@ public class UDP extends Object {
 	
 	public synchronized String getUDPMessage(Context context, String address, int port, String message) throws java.io.IOException {
 		int i;
+		String replyStr = "";
 		
 		if (socket == null) open();
 		try {
@@ -50,32 +49,19 @@ public class UDP extends Object {
 		
 			byte[] reply = new byte[1500];
 			DatagramPacket in = new DatagramPacket(reply, reply.length);
-/*		             
-			for (i = 0; i < 3; i++){
+		             
+			for (i = 0; i<3; i++)
+			{
 				try {
 					socket.send(out);
 			     	socket.receive(in);
+			     	replyStr = new String(reply, 0, in.getLength());
 			     	break;
-			     } catch (IOException e) {
-			     	//  Log.d("COMMS", "Failed to get reply. Error: " + e.getMessage());
-			     }
+			    } catch (IOException e) {
+			     	Log.d("COMMS", "Failed to get reply. Error: " + e.getMessage());
+			    }
 			}
-			
-		    if (i < 3) {
-		    	return new String(reply, 0, in.getLength());
-		    } else { 
-		    	return "";
-		    }
-*/
-			try {
-				socket.send(out);
-		     	socket.receive(in);
-		    } catch (IOException e) {
-		     	//  Log.d("COMMS", "Failed to get reply. Error: " + e.getMessage());
-		    	return "";
-		    }
-			
-	    	return new String(reply, 0, in.getLength());
+	    	return replyStr;
 		} catch (IOException e) {
 			//Log.d("COMMS", "Failed to resolve address. Error: " + e.getMessage());
 		}

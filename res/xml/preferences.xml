@@ -6,7 +6,7 @@
         android:key="settings_category">
 
         <EditTextPreference
-            android:key="clock_address"
+            android:key="clock1_address"
             android:title="Clock One Address" 
             android:summary="Define the address of the first Clock (name or IP)"
             android:dialogTitle="Clock One Address"
@@ -14,7 +14,7 @@
             android:defaultValue="192.168.1.101" />
 
         <EditTextPreference
-            android:key="clock_name"
+            android:key="clock1_name"
             android:title="Clock One Name" 
             android:summary="Define the name of the first Clock"
             android:dialogTitle="Clock One Name"

@@ -18,14 +18,17 @@ import java.net.UnknownHostException;
 import android.content.Context;
 import android.util.Log;
 
-public class UDP extends Object{
+public class TCPClient extends Object{
     Socket s = null;
     BufferedWriter out = null;
+    int timeout = 15000;
+    
 	
-	public void setTimeout(int timeout) {
+	public void setTimeout(int milli) {
+		timeout = milli;
 	}
 	
-	public synchronized void sendUDPMessage(String address, int port, String message) {
+	public synchronized void sendMessage(String address, int port, String message) {
 		String response = "";
 		InetAddress serverIP = null;
 		
@@ -39,7 +42,8 @@ public class UDP extends Object{
 		if (serverIP != null){
 		   	try {
 		   		Socket s = new Socket(serverIP.getHostAddress(), port);
-
+		   		s.setSoTimeout(timeout);
+		   		
 				//outgoing stream redirect to socket
 			    OutputStream out = s.getOutputStream();
 	
@@ -65,7 +69,7 @@ public class UDP extends Object{
 		}
 	}
 	
-	public synchronized String getUDPMessage(Context context, String address, int port, String message) {
+	public synchronized String getMessage(Context context, String address, int port, String message) {
 		String replyStr = "";
 		String response = "";
 		InetAddress serverIP = null;
@@ -80,6 +84,7 @@ public class UDP extends Object{
 		if (serverIP != null){
 		   	try {
 		   		Socket s = new Socket(serverIP.getHostAddress(), port);
+		   		s.setSoTimeout(timeout);
 
 				//outgoing stream redirect to socket
 			    OutputStream out = s.getOutputStream();

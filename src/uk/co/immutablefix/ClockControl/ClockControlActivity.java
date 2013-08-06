@@ -30,7 +30,7 @@ public class ClockControlActivity extends Activity {
 	Boolean running = true, paused = true;
 
 	DnssdDiscovery dns;
-	UDP udp;
+	TCPClient tcp;
 	
 	Button btnVolDown, btnVolUp;
 	RadioButton rbtnClock1, rbtnClock2;
@@ -44,11 +44,10 @@ public class ClockControlActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
        
-        dns = new DnssdDiscovery(getBaseContext());
-        dns.init();
+        dns = DnssdDiscovery.getInstance(getBaseContext());
         
-        udp = new UDP();
-        
+        tcp = new TCPClient();
+        tcp.setTimeout(5000);
         
         //  Log.d("Events", "Starting ... ");
     	
@@ -58,7 +57,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLUP");
+				tcp.sendMessage(getTargetIp(), 44558, "CLOCK:VOLUP");
 			}
 		});	
 
@@ -67,7 +66,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLDOWN");
+				tcp.sendMessage(getTargetIp(), 44558, "CLOCK:VOLDOWN");
 			}
 		});	
 	
@@ -76,7 +75,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:NEXT");
+				tcp.sendMessage(getTargetIp(), 44558, "CLOCK:NEXT");
 			}
 		});	
 	
@@ -85,7 +84,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:MUSIC");
+				tcp.sendMessage(getTargetIp(), 44558, "CLOCK:MUSIC");
 			}
 		});	
 	
@@ -94,7 +93,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:SLEEP");
+				tcp.sendMessage(getTargetIp(), 44558, "CLOCK:SLEEP");
 				//  Log.d("Events", "Sleep");
 			}
 		});	
@@ -104,7 +103,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:MEDITATION");
+				tcp.sendMessage(getTargetIp(), 44558, "CLOCK:MEDITATION");
 				//  Log.d("Events", "Meditation");
 			}
 		});	
@@ -114,7 +113,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:PAUSE");
+				tcp.sendMessage(getTargetIp(), 44558, "CLOCK:PAUSE");
 				//  Log.d("Events", "Sleep");
 
 			}
@@ -163,19 +162,17 @@ public class ClockControlActivity extends Activity {
 					if (!paused) {
 						if (btnVolUp.isPressed())
 						{
-							udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLUP");
+							tcp.sendMessage(getTargetIp(), 44558, "CLOCK:VOLUP");
 						}
 						else if (btnVolDown.isPressed())
 						{
-							udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLDOWN");
+							tcp.sendMessage(getTargetIp(), 44558, "CLOCK:VOLDOWN");
 						}
 						else
 						{
 							//  Log.d("TREAD", "Getting data ...");
-							reply = udp.getUDPMessage(getBaseContext(), getTargetIp(), 44558, "CLOCK:PLAYING");
+							reply = tcp.getMessage(getBaseContext(), getTargetIp(), 44558, "CLOCK:PLAYING");
 						}
-							
-				     	Log.d("TREAD_COMMS", "Tick ...");							
 					}
 
 					handler.post(new Runnable() {
@@ -261,7 +258,7 @@ public class ClockControlActivity extends Activity {
 	private void updatePlaying() {
 		String reply;
 		txtPlaying.setText("Updating ...");
-		reply = udp.getUDPMessage(getBaseContext(), getTargetIp(), 44558, "CLOCK:PLAYING");
+		reply = tcp.getMessage(getBaseContext(), getTargetIp(), 44558, "CLOCK:PLAYING");
 		txtPlaying.setText(reply);
 	}
 }

@@ -15,12 +15,23 @@ import javax.jmdns.ServiceListener;
 import android.content.Context;
 
 public class DnssdDiscovery extends Object {
-
+	
     android.net.wifi.WifiManager.MulticastLock lock;
     android.os.Handler handler = new android.os.Handler();
     Context context = null;
     List<String> hostnames, ipAdresses;
 
+    private static DnssdDiscovery mInstance = null;
+     
+    public static DnssdDiscovery getInstance(Context myContext){
+    	if(mInstance == null)
+    	{
+    		mInstance = new DnssdDiscovery(myContext);
+    		mInstance.init();
+    	}
+    	return mInstance;
+    }   
+    
     DnssdDiscovery(Context myContext) {
     	context = myContext;
     	
@@ -33,7 +44,7 @@ public class DnssdDiscovery extends Object {
             public void run() {
                 setUp();
             }
-            }, 500);
+            }, 1);
 
     }    
 

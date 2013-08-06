@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 public class WeatherActivity extends Activity {
 	String ipAddress = "192.168.1.101";
-    UDP udp;
+    TCPClient tcp;
 	
     /** Called when the activity is first created. */
     @Override
@@ -33,8 +33,8 @@ public class WeatherActivity extends Activity {
         
         setContentView(R.layout.weather);
 
-        udp = new UDP();
-        udp.setTimeout(5000);
+        tcp = new TCPClient();
+        tcp.setTimeout(5000);
     } 
     
     @Override
@@ -50,12 +50,12 @@ public class WeatherActivity extends Activity {
 		Object content = null;
 	
 		try {
-			reply = udp.getUDPMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHER");
+			reply = tcp.getMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHER");
 			if (reply.length() == 0) return;
 			
 			txtWeather.setText(reply);
 			
-			reply = udp.getUDPMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHERIMAGE:0");			
+			reply = tcp.getMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHERIMAGE:0");			
 			if (reply.length() == 0) return;
 
 			URL url = new URL(reply);
@@ -74,11 +74,11 @@ public class WeatherActivity extends Activity {
 		for (int i = 0; i < 5; i++)
 		{
 			try {
-				reply = udp.getUDPMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHER:" + Integer.toString(i));
+				reply = tcp.getMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHER:" + Integer.toString(i));
 				txtReport = (TextView) findViewById(txtId[i]);
 				txtReport.setText(reply);
 
-				reply = udp.getUDPMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHERIMAGE:" + Integer.toString(i));			
+				reply = tcp.getMessage(getBaseContext(), ipAddress, 44558, "CLOCK:WEATHERIMAGE:" + Integer.toString(i));			
 				URL url = new URL(reply);
 			    content = url.getContent();
 

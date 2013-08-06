@@ -5,66 +5,106 @@
 
 package uk.co.immutablefix.ClockControl;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 import android.content.Context;
 import android.util.Log;
 
-public class UDP extends Object {
-	DatagramSocket socket = null;
-
-	public void open() throws java.io.IOException {
-    	socket = new DatagramSocket();
-		socket.setSoTimeout(6000);
-	}
-
-	public void close() {
-		if (socket != null) socket.close();
+public class UDP extends Object{
+    Socket s = null;
+    BufferedWriter out = null;
+	
+	public void setTimeout(int timeout) {
 	}
 	
-	public synchronized void sendUDPMessage(String address, int port, String message) throws java.io.IOException {
-	     if (socket == null) open();
-	     InetAddress serverIP = InetAddress.getByName(address);
-	     
-	     if (serverIP != null){
-	    	 byte[] outData = (message).getBytes();
-	    	 DatagramPacket out = new DatagramPacket(outData, outData.length, serverIP, port);
-	    	 socket.send(out);
-	     }
-	}
-	
-	public synchronized String getUDPMessage(Context context, String address, int port, String message) throws java.io.IOException {
-		int i;
-		String replyStr = "";
+	public synchronized void sendUDPMessage(String address, int port, String message) {
+		String response = "";
+		InetAddress serverIP = null;
 		
-		if (socket == null) open();
 		try {
-			InetAddress serverIP = InetAddress.getByName(address);
-		
-			byte[] outData = (message).getBytes();
-			DatagramPacket out = new DatagramPacket(outData, outData.length, serverIP, port);
-		
-			byte[] reply = new byte[1500];
-			DatagramPacket in = new DatagramPacket(reply, reply.length);
-		             
-			for (i = 0; i<3; i++)
-			{
-				try {
-					socket.send(out);
-			     	socket.receive(in);
-			     	replyStr = new String(reply, 0, in.getLength());
-			     	break;
-			    } catch (IOException e) {
-			     	Log.d("COMMS", "Failed to get reply. Error: " + e.getMessage());
-			    }
-			}
-	    	return replyStr;
-		} catch (IOException e) {
-			//Log.d("COMMS", "Failed to resolve address. Error: " + e.getMessage());
+			serverIP = InetAddress.getByName(address);
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-		return "";
+		
+		if (serverIP != null){
+		   	try {
+		   		Socket s = new Socket(serverIP.getHostAddress(), port);
+
+				//outgoing stream redirect to socket
+			    OutputStream out = s.getOutputStream();
+	
+			    PrintWriter output = new PrintWriter(out);
+			    BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			    output.println(message);
+			    output.flush();
+			    
+			    //read line(s)
+			    while ((response != null) && (!response.equals(":OK")))
+			    {
+			    	response = input.readLine();
+			    }
+
+			    output.close();
+			    s.close();
+			} catch (UnknownHostException e) {
+			    // TODO Auto-generated catch block
+				Log.d("COMMS", "Failed to resolve address. Error: " + e.getMessage());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public synchronized String getUDPMessage(Context context, String address, int port, String message) {
+		String replyStr = "";
+		String response = "";
+		InetAddress serverIP = null;
+
+		try {
+			serverIP = InetAddress.getByName(address);
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if (serverIP != null){
+		   	try {
+		   		Socket s = new Socket(serverIP.getHostAddress(), port);
+
+				//outgoing stream redirect to socket
+			    OutputStream out = s.getOutputStream();
+	
+			    PrintWriter output = new PrintWriter(out);
+			    BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			    output.println(message);
+			    output.flush();
+			    
+			    //read line(s)
+			    while ((response != null) && (!response.equals(":OK")))
+			    {
+			    	response = input.readLine();
+			    	if (!response.equals(":OK")) replyStr = replyStr.concat(response);
+			    }
+
+			    output.close();
+			    s.close();
+			} catch (UnknownHostException e) {
+			    // TODO Auto-generated catch block
+				Log.d("COMMS", "Failed to resolve address. Error: " + e.getMessage());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return replyStr;
 	}
 }

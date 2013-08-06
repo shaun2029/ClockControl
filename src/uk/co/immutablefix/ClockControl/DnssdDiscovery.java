@@ -12,11 +12,7 @@ import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.TextView;
 
 public class DnssdDiscovery extends Object {
 
@@ -44,7 +40,6 @@ public class DnssdDiscovery extends Object {
     private String type = "_workstation._tcp.local.";
     private JmDNS jmdns = null;
     private ServiceListener listener = null;
-    private ServiceInfo serviceInfo;
     private void setUp() {
         android.net.wifi.WifiManager wifi = (android.net.wifi.WifiManager) context.getSystemService(android.content.Context.WIFI_SERVICE);
         lock = wifi.createMulticastLock("clockcontrolmulticastlock");

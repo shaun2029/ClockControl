@@ -5,8 +5,9 @@
 
 package uk.co.immutablefix.ClockControl;
 
-import java.io.IOException;
+import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +23,7 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+@SuppressLint("DefaultLocale")
 public class ClockControlActivity extends Activity {
 	String hostname = "";
 	String weather = "";
@@ -32,6 +34,7 @@ public class ClockControlActivity extends Activity {
 	
 	Button btnVolDown, btnVolUp;
 	RadioButton rbtnClock1, rbtnClock2;
+	TextView txtPlaying;
 	SharedPreferences prefs = null;
 	
 
@@ -49,19 +52,13 @@ public class ClockControlActivity extends Activity {
         
         //  Log.d("Events", "Starting ... ");
     	
-    	final TextView txtPlaying = (TextView) findViewById(R.id.txt_playing);	    
+    	txtPlaying = (TextView) findViewById(R.id.txt_playing);	    
         btnVolUp = (Button) findViewById(R.id.btn_volumeup);
 	    btnVolUp.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				try {
-					udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLUP");
-					//  Log.d("Events", "VolUp");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLUP");
 			}
 		});	
 
@@ -70,13 +67,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				try {
-					udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLDOWN");
-					//  Log.d("Events", "VolDown");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLDOWN");
 			}
 		});	
 	
@@ -85,13 +76,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				try {
-					udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:NEXT");
-					//  Log.d("Events", "Next");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:NEXT");
 			}
 		});	
 	
@@ -100,13 +85,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				try {
-					udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:MUSIC");
-					//  Log.d("Events", "Music");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:MUSIC");
 			}
 		});	
 	
@@ -115,13 +94,8 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				try {
-					udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:SLEEP");
-					//  Log.d("Events", "Sleep");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:SLEEP");
+				//  Log.d("Events", "Sleep");
 			}
 		});	
 	
@@ -130,13 +104,8 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				try {
-					udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:MEDITATION");
-					//  Log.d("Events", "Meditation");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:MEDITATION");
+				//  Log.d("Events", "Meditation");
 			}
 		});	
 
@@ -145,14 +114,9 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				try {
-					udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:PAUSE");
-					//  Log.d("Events", "Sleep");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
+				udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:PAUSE");
+				//  Log.d("Events", "Sleep");
+
 			}
 		});	
 	    
@@ -167,11 +131,7 @@ public class ClockControlActivity extends Activity {
 	    rbtnClock1.setOnClickListener(new View.OnClickListener() {	
 			@Override
 			public void onClick(View v) {
-				txtPlaying.setText("Updating ...");
-
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-				hostname = prefs.getString("clock1_address", hostname);
-				
+				updatePlaying();
 			}
 		});			
 	    
@@ -179,10 +139,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				txtPlaying.setText("Updating ...");
-				
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-				hostname = prefs.getString("clock2_address", hostname);
+				updatePlaying();
 			}
 		});	
 
@@ -196,39 +153,35 @@ public class ClockControlActivity extends Activity {
 				int time = 500;
 				
 				while (running) {
+	                try {
+                		Thread.sleep(time);
+	                } catch (InterruptedException e1) {
+	                	// TODO Auto-generated catch block
+	                	e1.printStackTrace();
+	                }	
 			    	
-					try {
-						Thread.sleep(time);
-					} catch (InterruptedException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					if (!paused) {
+						if (btnVolUp.isPressed())
+						{
+							udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLUP");
+						}
+						else if (btnVolDown.isPressed())
+						{
+							udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLDOWN");
+						}
+						else
+						{
+							//  Log.d("TREAD", "Getting data ...");
+							reply = udp.getUDPMessage(getBaseContext(), getTargetIp(), 44558, "CLOCK:PLAYING");
+						}
+							
+				     	Log.d("TREAD_COMMS", "Tick ...");							
 					}
 
-					if (!paused) {
-						try {
-							if (btnVolUp.isPressed())
-							{
-								udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLUP");
-							}
-							else if (btnVolDown.isPressed())
-							{
-								udp.sendUDPMessage(getTargetIp(), 44558, "CLOCK:VOLDOWN");
-							}
-							else
-							{
-								//  Log.d("TREAD", "Getting data ...");
-								reply = udp.getUDPMessage(getBaseContext(), getTargetIp(), 44558, "CLOCK:PLAYING");
-							}
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-					
 					handler.post(new Runnable() {
 						@Override
 						public void run() {
-							if ((reply.length() > 0) && (!reply.equals(txtPlaying.getText()))) 
+							if ((reply != null) && (reply.length() > 0) && (!reply.equals(txtPlaying.getText()))) 
 								txtPlaying.setText(reply);
 						}
 					});
@@ -237,8 +190,8 @@ public class ClockControlActivity extends Activity {
 		};
 		new Thread(runnable).start();
 		//  Log.d("Events", "Starting ... Fin");
-    }
-    
+     }
+
     public void onStart()
     {
     	super.onStart();
@@ -296,14 +249,19 @@ public class ClockControlActivity extends Activity {
     public void onDestroy(){
     	super.onDestroy();
     	running = false;
-    	udp.close();
     }
     
 	private String getTargetIp() {
     	if (rbtnClock1.isChecked())
-    		hostname = prefs.getString("clock1_address", hostname).toLowerCase();
+    		hostname = prefs.getString("clock1_address", hostname).toLowerCase(Locale.getDefault());
     	else
-    		hostname = prefs.getString("clock2_address", hostname).toLowerCase();
+    		hostname = prefs.getString("clock2_address", hostname).toLowerCase(Locale.getDefault());
         return dns.getHostAddress(hostname);
-    }    
+    }
+	private void updatePlaying() {
+		String reply;
+		txtPlaying.setText("Updating ...");
+		reply = udp.getUDPMessage(getBaseContext(), getTargetIp(), 44558, "CLOCK:PLAYING");
+		txtPlaying.setText(reply);
+	}
 }

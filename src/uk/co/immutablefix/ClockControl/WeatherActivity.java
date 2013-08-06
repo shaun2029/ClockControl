@@ -26,7 +26,7 @@ public class WeatherActivity extends Activity {
         
         Bundle bundle = this.getIntent().getExtras();
         
-        if(bundle !=null)
+        if(bundle != null)
         {
         	ipAddress = bundle.getString("ipAddress"); 
         }
@@ -34,6 +34,7 @@ public class WeatherActivity extends Activity {
         setContentView(R.layout.weather);
 
         udp = new UDP();
+        udp.setTimeout(5000);
     } 
     
     @Override
@@ -95,6 +96,5 @@ public class WeatherActivity extends Activity {
     @Override
     public void onDestroy(){
     	super.onDestroy();
-    	udp.close();
     }    
  }

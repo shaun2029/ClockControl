@@ -98,7 +98,17 @@ public class TCPClient extends Object{
 			    while ((response != null) && (!response.equals(":OK")))
 			    {
 			    	response = input.readLine();
-			    	if (!response.equals(":OK")) replyStr = replyStr.concat(response);
+			    	if (!response.equals(":OK")) 
+			    	{
+			    		// Add line ending if needed
+			    		if (replyStr.length() > 0)
+			    		{
+			    			replyStr = replyStr.concat(System.getProperty("line.separator"));
+			    		}
+
+		    			replyStr = replyStr.concat(response);
+			    	}
+			    	
 			    }
 
 			    output.close();

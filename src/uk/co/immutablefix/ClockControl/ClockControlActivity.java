@@ -7,7 +7,7 @@ package uk.co.immutablefix.ClockControl;
 
 import java.util.Locale;
 
-import android.annotation.SuppressLint;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,7 +23,6 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-@SuppressLint("DefaultLocale")
 public class ClockControlActivity extends Activity {
 	String hostname = "";
 	String weather = "";

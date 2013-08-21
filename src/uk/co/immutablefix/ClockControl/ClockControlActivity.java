@@ -14,7 +14,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,7 +25,7 @@ import android.widget.TextView;
 public class ClockControlActivity extends Activity {
 	String hostname = "";
 	String weather = "";
-	Boolean running = true, paused = true;
+	Boolean running = true;
 
 	DnssdDiscovery dns;
 	TCPClient tcp;
@@ -35,6 +34,8 @@ public class ClockControlActivity extends Activity {
 	RadioButton rbtnClock1, rbtnClock2;
 	TextView txtPlaying;
 	SharedPreferences prefs = null;
+	
+	Thread thread = null;
 	
 
     /** Called when the activity is first created. */
@@ -141,55 +142,56 @@ public class ClockControlActivity extends Activity {
 			}
 		});	
 
-	    final Handler handler = new Handler();
-	    
-		Runnable runnable = new Runnable() {
-		    String reply;
-		    
-			@Override
-			public void run() {
-				int time = 500;
-				
-				while (running) {
-					Log.d("TREAD", "Tick ...");
-
-					try {
-                		Thread.sleep(time);
-	                } catch (InterruptedException e1) {
-	                	// TODO Auto-generated catch block
-	                	e1.printStackTrace();
-	                }	
-			    	
-					if (!paused) {
-						if (btnVolUp.isPressed())
-						{
-							tcp.sendMessage(getTargetIp(), 44558, "CLOCK:VOLUP");
-						}
-						else if (btnVolDown.isPressed())
-						{
-							tcp.sendMessage(getTargetIp(), 44558, "CLOCK:VOLDOWN");
-						}
-						else
-						{
-							//  Log.d("TREAD", "Getting data ...");
-							reply = tcp.getMessage(getBaseContext(), getTargetIp(), 44558, "CLOCK:PLAYING");
-						}
-					}
-
-					handler.post(new Runnable() {
-						@Override
-						public void run() {
-							if ((reply != null) && (reply.length() > 0) && (!reply.equals(txtPlaying.getText()))) 
-								txtPlaying.setText(reply);
-						}
-					});
-				}
-			}
-		};
-		new Thread(runnable).start();
 		//  Log.d("Events", "Starting ... Fin");
      }
 
+    final Handler handler = new Handler();
+    Runnable runnable = new Runnable() {
+	    String reply;
+	    
+		@Override
+		public void run() {
+			int time = 500;
+			
+			while (running) {
+				//Log.d("TREAD", "Tick ...");
+
+				try {
+            		Thread.sleep(time);
+                } catch (InterruptedException e1) {
+                	// TODO Auto-generated catch block
+                	e1.printStackTrace();
+                }	
+		    	
+				if (btnVolUp.isPressed())
+				{
+					tcp.sendMessage(getTargetIp(), 44558, "CLOCK:VOLUP");
+				}
+				else if (btnVolDown.isPressed())
+				{
+					tcp.sendMessage(getTargetIp(), 44558, "CLOCK:VOLDOWN");
+				}
+				else
+				{
+					//  Log.d("TREAD", "Getting data ...");
+					reply = tcp.getMessage(getBaseContext(), getTargetIp(), 44558, "CLOCK:PLAYING");
+				}
+			
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						if ((reply != null) && (reply.length() > 0) && (!reply.equals(txtPlaying.getText()))) 
+							txtPlaying.setText(reply);
+					}
+				});
+				
+			}
+			
+			//Log.d("THREAD", "Ended.");		
+			return;
+		}
+	};
+    
     public void onStart()
     {
     	super.onStart();
@@ -197,19 +199,24 @@ public class ClockControlActivity extends Activity {
 		rbtnClock1.setText(prefs.getString("clock1_name", (String) rbtnClock1.getText()));
 		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
 
-		paused = false;
+		running = true;
+		thread = new Thread(runnable);
+		thread.start();
 	}
     
     public void onPause()
     {
     	super.onPause();    	
-    	paused = true;
+    	running = false;
+		thread.interrupt();
     }
     
     public void onReStart()
     {
     	super.onRestart();   	
-    	paused = false;
+    	running = true;
+    	thread = new Thread(runnable);
+    	thread.start();
     }
     
     //Creates menus
@@ -247,6 +254,7 @@ public class ClockControlActivity extends Activity {
     public void onDestroy(){
     	super.onDestroy();
     	running = false;
+		thread.interrupt();
     }
     
 	private String getTargetIp() {

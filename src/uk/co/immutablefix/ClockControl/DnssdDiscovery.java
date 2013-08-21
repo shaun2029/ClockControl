@@ -3,14 +3,14 @@
 
 package uk.co.immutablefix.ClockControl;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.jmdns.JmDNS;
-import javax.jmdns.ServiceEvent;
-import javax.jmdns.ServiceInfo;
-import javax.jmdns.ServiceListener;
 
 import android.content.Context;
 
@@ -27,7 +27,6 @@ public class DnssdDiscovery extends Object {
     	if(mInstance == null)
     	{
     		mInstance = new DnssdDiscovery(myContext);
-    		mInstance.init();
     	}
     	return mInstance;
     }   
@@ -39,79 +38,72 @@ public class DnssdDiscovery extends Object {
     	ipAdresses = new ArrayList<String>();
     }
     
-    public void init() {
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                setUp();
-            }
-            }, 1);
+    public synchronized String getHostAddress(String host) {
+    	String address = host;
+    	
+    	// Search cache.
+    	int i = hostnames.indexOf(host);
+    	
+   	    if (i >= 0) {
+    	    return ipAdresses.get(i); 
+    	}
+   	    
+    	byte[] header = new byte[] { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
+    	byte[] footer = new byte[] { 0x05, 0x6c, 0x6f, 0x63, 0x61, 0x6c, 0, 0, 1, 0, 1 };
+        byte[] reply = new byte[1500];
 
-    }    
+        if (!host.contains(".local")) return host;
+        int hostLen = host.indexOf(".local");
 
-    private String type = "_workstation._tcp.local.";
-    private JmDNS jmdns = null;
-    private ServiceListener listener = null;
-    private void setUp() {
+        // Get multicast lock.
         android.net.wifi.WifiManager wifi = (android.net.wifi.WifiManager) context.getSystemService(android.content.Context.WIFI_SERVICE);
         lock = wifi.createMulticastLock("clockcontrolmulticastlock");
         lock.setReferenceCounted(true);
         lock.acquire();
-        try {
-            jmdns = JmDNS.create();
-            jmdns.addServiceListener(type, listener = new ServiceListener() {
+        
+		try {
+	        // Build mDND request packet.
+			ByteArrayOutputStream buf = new ByteArrayOutputStream();
+	        buf.write(header);
 
-                @Override
-                public void serviceResolved(ServiceEvent ev) {
-                }
+	    	buf.write(hostLen);
+	        
+	        for (i = 0; i < hostLen; i++)
+	        {
+	        	buf.write(host.charAt(i));
+	        }
+	        
+	        buf.write(footer);
 
-                @Override
-                public void serviceRemoved(ServiceEvent ev) {
-                }
+			MulticastSocket s = new MulticastSocket();
 
-                @Override
-                public void serviceAdded(ServiceEvent ev) {
-                	ServiceInfo info = jmdns.getServiceInfo(ev.getType(), ev.getName(), 1);
-                	
-                	hostnames.add(info.getName().split(" ")[0]);
-                	ipAdresses.add(info.getHostAddress());
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-    }
-
-    protected void deinit() {
-    	if (jmdns != null) {
-            if (listener != null) {
-                jmdns.removeServiceListener(type, listener);
-                listener = null;
-            }
-            jmdns.unregisterAllServices();
-            try {
-                jmdns.close();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            jmdns = null;
-    	}
-        lock.release();
+			DatagramPacket replyPacket = new DatagramPacket(reply, reply.length);
+			DatagramPacket sendPacket = new DatagramPacket(buf.toByteArray(), buf.size(), 
+					InetAddress.getByName("224.0.0.251"), 5353);
+		
+			s.setTimeToLive(255);
+			s.setSoTimeout(3000);
+			
+			s.send(sendPacket);
+			s.receive(replyPacket);			
+			
+			address = replyPacket.getAddress().getHostAddress();
+			
+			// Cache host info.
+        	hostnames.add(host);
+        	ipAdresses.add(address);
+        	
+	        s.close();
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		lock.release();
+    	
+    	return address;
     }
     
-    public synchronized String getHostAddress(String host) {
-    	/*
-    	// iterate over the array
-    	for( int i = 0; i < hostnames.size(); i++) {
-    	    Log.d(hostnames.get(i), ipAdresses.get(i));
-    	}
-    	*/
-    	int i = hostnames.indexOf(host);
-    	    	
-   	    if (i >= 0) {
-    	    return ipAdresses.get(i); 
-    	}
-   	    else return host;
-    }
 }

@@ -151,7 +151,9 @@ public class ClockControlActivity extends Activity {
 				int time = 500;
 				
 				while (running) {
-	                try {
+					Log.d("TREAD", "Tick ...");
+
+					try {
                 		Thread.sleep(time);
 	                } catch (InterruptedException e1) {
 	                	// TODO Auto-generated catch block

@@ -25,6 +25,7 @@ public class ClockControlActivity extends Activity {
 	String weather = "";
 	Boolean running = true;
 	long backPressed = 0;
+	int radioChannel = 0;
 
 	DnssdDiscovery dns;
 	TCPClient tcp;
@@ -104,6 +105,18 @@ public class ClockControlActivity extends Activity {
 			public void onClick(View v) {
 				sendCommand(44558, "CLOCK:MEDITATION");
 				//  Log.d("Events", "Meditation");
+			}
+		});	
+
+	    Button btnRadio = (Button) findViewById(R.id.btn_radio);
+	    btnRadio.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				radioChannel += 1;
+				if (radioChannel < 1) radioChannel = 1;   
+				if (radioChannel > 9) radioChannel = 1;   
+				sendCommand(44558, "CLOCK:RADIO:" + String.valueOf(radioChannel));
 			}
 		});	
 

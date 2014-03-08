@@ -84,6 +84,15 @@
             android:layout_weight="0.50"
             android:text="Meditation"
             android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/Button01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.50"
+            android:text="Radio"
+            android:textSize="24sp" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -93,12 +102,14 @@
 
 	    <RadioGroup
 	        android:layout_width="match_parent"
-    	    android:layout_height="wrap_content">
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
 	        
             <RadioButton
                 android:id="@+id/radioButton1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:checked="true"
                 android:text="Clock 1"
                 android:textSize="24sp" />
@@ -107,8 +118,10 @@
                 android:id="@+id/radioButton2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Clock 2"
                 android:textSize="24sp" />
+
         </RadioGroup>
     </LinearLayout>
 </LinearLayout>

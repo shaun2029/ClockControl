@@ -24,11 +24,6 @@
             </intent-filter>
         </activity>
 		<activity
-        	android:name=".WeatherActivity"
-        	android:label="@string/weather_label"
-        	android:uiOptions="" >
-		</activity>
-		<activity
         	android:name=".Preferences"
         	android:label="@string/preferences_label">
 		</activity>

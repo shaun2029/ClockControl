@@ -80,7 +80,7 @@ public class TCPClient extends Object{
 		
 		if (serverIP != null){
 		   	try {
-		   		Socket s = new Socket(serverIP.getHostAddress(), port);
+		   		Socket s = new Socket(serverIP, port);
 		   		s.setSoTimeout(timeout);
 
 				//outgoing stream redirect to socket

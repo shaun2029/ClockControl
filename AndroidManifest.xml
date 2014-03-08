@@ -4,8 +4,11 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk android:minSdkVersion="8" />
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="19" />
+        
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     
     <application
@@ -23,8 +26,7 @@
 		<activity
         	android:name=".WeatherActivity"
         	android:label="@string/weather_label"
-        	android:uiOptions=""
-        	>
+        	android:uiOptions="" >
 		</activity>
 		<activity
         	android:name=".Preferences"

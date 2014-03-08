@@ -82,7 +82,7 @@ public class DnssdDiscovery extends Object {
 					InetAddress.getByName("224.0.0.251"), 5353);
 		
 			s.setTimeToLive(255);
-			s.setSoTimeout(3000);
+			s.setSoTimeout(1000);
 			
 			s.send(sendPacket);
 			s.receive(replyPacket);			

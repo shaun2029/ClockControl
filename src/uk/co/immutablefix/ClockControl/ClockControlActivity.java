@@ -18,11 +18,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ClockControlActivity extends Activity {
 	String hostname = "";
 	String weather = "";
 	Boolean running = true;
+	long backPressed = 0;
 
 	DnssdDiscovery dns;
 	TCPClient tcp;
@@ -44,7 +46,7 @@ public class ClockControlActivity extends Activity {
         dns = DnssdDiscovery.getInstance(getBaseContext());
         
         tcp = new TCPClient();
-        tcp.setTimeout(5000);
+        tcp.setTimeout(2000);
         
         //  Log.d("Events", "Starting ... ");
     	
@@ -54,7 +56,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				tcp.sendMessage(getTargetIp(), 44558, "CLOCK:VOLUP");
+				sendCommand(44558, "CLOCK:VOLUP");
 			}
 		});	
 
@@ -63,7 +65,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				tcp.sendMessage(getTargetIp(), 44558, "CLOCK:VOLDOWN");
+				sendCommand(44558, "CLOCK:VOLDOWN");
 			}
 		});	
 	
@@ -72,7 +74,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				tcp.sendMessage(getTargetIp(), 44558, "CLOCK:NEXT");
+				sendCommand(44558, "CLOCK:NEXT");
 			}
 		});	
 	
@@ -81,7 +83,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				tcp.sendMessage(getTargetIp(), 44558, "CLOCK:MUSIC");
+				sendCommand(44558, "CLOCK:MUSIC");
 			}
 		});	
 	
@@ -90,7 +92,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				tcp.sendMessage(getTargetIp(), 44558, "CLOCK:SLEEP");
+				sendCommand(44558, "CLOCK:SLEEP");
 				//  Log.d("Events", "Sleep");
 			}
 		});	
@@ -100,7 +102,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				tcp.sendMessage(getTargetIp(), 44558, "CLOCK:MEDITATION");
+				sendCommand(44558, "CLOCK:MEDITATION");
 				//  Log.d("Events", "Meditation");
 			}
 		});	
@@ -110,7 +112,7 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				tcp.sendMessage(getTargetIp(), 44558, "CLOCK:PAUSE");
+				sendCommand(44558, "CLOCK:PAUSE");
 				//  Log.d("Events", "Sleep");
 
 			}
@@ -148,32 +150,14 @@ public class ClockControlActivity extends Activity {
 	    
 		@Override
 		public void run() {
-			int time = 500;
+			int time = 3000;
 			
 			while (running) {
 				//Log.d("TREAD", "Tick ...");
 
-				try {
-            		Thread.sleep(time);
-                } catch (InterruptedException e1) {
-                	// TODO Auto-generated catch block
-                	e1.printStackTrace();
-                }	
-		    	
-				if (btnVolUp.isPressed())
-				{
-					tcp.sendMessage(getTargetIp(), 44558, "CLOCK:VOLUP");
-				}
-				else if (btnVolDown.isPressed())
-				{
-					tcp.sendMessage(getTargetIp(), 44558, "CLOCK:VOLDOWN");
-				}
-				else
-				{
-					//  Log.d("TREAD", "Getting data ...");
-					reply = tcp.getMessage(getBaseContext(), getTargetIp(), 44558, "CLOCK:PLAYING");
-				}
-			
+				//  Log.d("TREAD", "Getting data ...");
+				reply = tcp.getMessage(getBaseContext(), getTargetIp(), 44558, "CLOCK:PLAYING");
+
 				handler.post(new Runnable() {
 					@Override
 					public void run() {
@@ -182,6 +166,12 @@ public class ClockControlActivity extends Activity {
 					}
 				});
 				
+				try {
+            		Thread.sleep(time);
+                } catch (InterruptedException e1) {
+                	// TODO Auto-generated catch block
+                	e1.printStackTrace();
+                }	
 			}
 			
 			//Log.d("THREAD", "Ended.");		
@@ -201,15 +191,15 @@ public class ClockControlActivity extends Activity {
 		thread.start();
 	}
     
-    public void onPause()
-    {
+	@Override
+    public void onPause() {
     	super.onPause();    	
     	running = false;
 		thread.interrupt();
     }
     
-    public void onReStart()
-    {
+	@Override
+    public void onRestart() {
     	super.onRestart();   	
     	running = true;
     	thread = new Thread(runnable);
@@ -229,13 +219,6 @@ public class ClockControlActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
-    	case R.id.mitmWeather:
-    		Bundle basket = new Bundle();
-    		basket.putString("ipAddress", getTargetIp());
-    		Intent weather = new Intent(this, WeatherActivity.class);
-    		weather.putExtras(basket);    		
-    		startActivity(weather);
-    		return true;
     	case R.id.mitmPreferences:
     		startActivity(new Intent(this, Preferences.class));
     		return true;
@@ -253,6 +236,18 @@ public class ClockControlActivity extends Activity {
     	running = false;
 		thread.interrupt();
     }
+	@Override
+	public void onBackPressed()
+	{
+		if (backPressed < java.lang.System.currentTimeMillis()) {
+			Toast.makeText(getApplicationContext(),
+					"Press back again to exit", 
+	    			Toast.LENGTH_SHORT).show();
+			backPressed = java.lang.System.currentTimeMillis() + 5000;
+		} else {
+			finish();
+		}
+	}
     
 	private String getTargetIp() {
     	if (rbtnClock1.isChecked())
@@ -261,10 +256,26 @@ public class ClockControlActivity extends Activity {
     		hostname = prefs.getString("clock2_address", hostname).toLowerCase(Locale.getDefault());
         return dns.getHostAddress(hostname);
     }
+
 	private void updatePlaying() {
-		String reply;
 		txtPlaying.setText("Updating ...");
-		reply = tcp.getMessage(getBaseContext(), getTargetIp(), 44558, "CLOCK:PLAYING");
-		txtPlaying.setText(reply);
+
+    	running = false;
+		thread.interrupt();
+		running = true;
+		thread = new Thread(runnable);
+		thread.start();
+	}
+	
+	private void sendCommand(final int port, final String command) {
+	    Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				tcp.sendMessage(getTargetIp(), port, command);
+				return;
+			}
+	    };
+    	Thread thread = new Thread(runnable);
+    	thread.start();	    
 	}
 }

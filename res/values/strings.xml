@@ -2,8 +2,7 @@
 <resources>
 
     <string name="app_name">ClockControl</string>
-    <string name="weather_label">Weather</string>
-    <string name="weather_shortcut">Weather Short</string>
+    <string name="station_picker_label">ClockControl - Radio Stations</string>
     <string name="preferences_label">Preferences</string>
     <string name="preferences_shortcut">Preferences Short</string>
     <string name="quit_label">Quit</string>

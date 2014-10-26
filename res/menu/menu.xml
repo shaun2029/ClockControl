@@ -2,6 +2,4 @@
     <menu xmlns:android="http://schemas.android.com/apk/res/android">
         <item android:id="@+id/mitmPreferences" android:title="@string/preferences_label" 
             android:alphabeticShortcut="@string/preferences_shortcut" android:showAsAction="ifRoom|withText"></item>
-		<item android:id="@+id/mitmQuit" android:title="@string/quit_label" 
-		    android:alphabeticShortcut="@string/quit_shortcut" android:showAsAction="ifRoom|withText"></item>
     </menu>

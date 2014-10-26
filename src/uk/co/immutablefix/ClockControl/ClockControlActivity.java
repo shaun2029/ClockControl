@@ -1,9 +1,8 @@
 // Copyright 2012 Shaun Simpson shauns2029@gmail.com
 
 package uk.co.immutablefix.ClockControl;
-
+import uk.co.immutablefix.ClockControl.StationPickerActivity;
 import java.util.Locale;
-
 
 import android.app.Activity;
 import android.content.Intent;
@@ -21,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ClockControlActivity extends Activity {
+	private static final int GET_RADIO_STATION = 3007;
+	
 	String hostname = "";
 	String weather = "";
 	Boolean running = true;
@@ -113,10 +114,13 @@ public class ClockControlActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
+				/*
 				radioChannel += 1;
 				if (radioChannel < 1) radioChannel = 1;   
-				if (radioChannel > 9) radioChannel = 1;   
+				if (radioChannel > 9) radioChannel = 1;
 				sendCommand(44558, "CLOCK:RADIO:" + String.valueOf(radioChannel));
+				*/
+				launchStationPicker();			
 			}
 		});	
 
@@ -167,6 +171,29 @@ public class ClockControlActivity extends Activity {
 		//  Log.d("Events", "Starting ... Fin");
      }
 
+	private void launchStationPicker() {
+		Intent intent = new Intent(this, StationPickerActivity.class);
+		//intent.putExtra(StationPickerActivity.KEY_MULTI_SELECT, multiSelect);
+		startActivityForResult(intent, GET_RADIO_STATION);
+	}
+	
+	// Listen for results.
+	@Override  
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+	    // See which child activity is calling us back.
+	    switch (requestCode) {
+	        case GET_RADIO_STATION:
+	            // This is the standard resultCode that is sent back if the
+	            // activity crashed or didn't doesn't supply an explicit result.
+	        	if (resultCode == RESULT_OK){
+	        		radioChannel = data.getIntExtra("station", 0);
+	        		sendCommand(44558, "CLOCK:RADIO:" + String.valueOf(radioChannel));
+	        	}
+	        default:
+	            break;
+	    }
+	}		
+	
     final Handler handler = new Handler();
     Runnable runnable = new Runnable() {
 	    String reply;
@@ -245,9 +272,6 @@ public class ClockControlActivity extends Activity {
     	case R.id.mitmPreferences:
     		startActivity(new Intent(this, Preferences.class));
     		return true;
-    	case R.id.mitmQuit:
-    		finish();
-    		break;
     	}
     	
     	return false;

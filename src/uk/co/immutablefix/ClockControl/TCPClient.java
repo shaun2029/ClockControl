@@ -95,7 +95,7 @@ public class TCPClient extends Object{
 			    while ((response != null) && (!response.equals(":OK")))
 			    {
 			    	response = input.readLine();
-			    	if (!response.equals(":OK")) 
+			    	if ((response != null) && (!response.equals(":OK"))) 
 			    	{
 			    		// Add line ending if needed
 			    		if (replyStr.length() > 0)

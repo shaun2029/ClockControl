@@ -24,6 +24,7 @@ public class ClockControlActivity extends Activity {
 	
 	String hostname = "";
 	String weather = "";
+	String radioStations = "";
 	Boolean running = true;
 	long backPressed = 0;
 	int radioChannel = 0;
@@ -48,7 +49,7 @@ public class ClockControlActivity extends Activity {
         dns = DnssdDiscovery.getInstance(getBaseContext());
         
         tcp = new TCPClient();
-        tcp.setTimeout(2000);
+        tcp.setTimeout(1000);
         
         //  Log.d("Events", "Starting ... ");
     	
@@ -172,9 +173,13 @@ public class ClockControlActivity extends Activity {
      }
 
 	private void launchStationPicker() {
-		Intent intent = new Intent(this, StationPickerActivity.class);
-		//intent.putExtra(StationPickerActivity.KEY_MULTI_SELECT, multiSelect);
-		startActivityForResult(intent, GET_RADIO_STATION);
+		if (radioStations != "") {
+			Intent intent = new Intent(this, StationPickerActivity.class);
+			intent.putExtra(StationPickerActivity.KEY_RADIO_STATIONS, radioStations);
+			startActivityForResult(intent, GET_RADIO_STATION);
+		} else {
+			sendCommand(44558, "CLOCK:RADIO:TOGGLE" + String.valueOf(radioChannel));
+		}
 	}
 	
 	// Listen for results.
@@ -187,7 +192,7 @@ public class ClockControlActivity extends Activity {
 	            // activity crashed or didn't doesn't supply an explicit result.
 	        	if (resultCode == RESULT_OK){
 	        		radioChannel = data.getIntExtra("station", 0);
-	        		sendCommand(44558, "CLOCK:RADIO:" + String.valueOf(radioChannel));
+	        		sendCommand(44558, "CLOCK:SET:RADIOSTATION:" + String.valueOf(radioChannel));
 	        	}
 	        default:
 	            break;
@@ -195,16 +200,29 @@ public class ClockControlActivity extends Activity {
 	}		
 	
     final Handler handler = new Handler();
+    final Handler stationHandler = new Handler();
     Runnable runnable = new Runnable() {
-	    String reply;
+	    String reply, stationReply;
 	    
 		@Override
 		public void run() {
-			int time = 1000;
+			int time = 500;
 			
 			while (running) {
 				//Log.d("TREAD", "Tick ...");
-
+				
+				if (radioStations == "") {
+					stationReply = tcp.getMessage(getBaseContext(), getTargetIp(), 44558, "CLOCK:GET:RADIOSTATIONS");
+	
+					stationHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							if ((stationReply != null) && (stationReply.length() > 0)) 
+								radioStations = stationReply;
+						}
+					});
+				}
+			
 				//  Log.d("TREAD", "Getting data ...");
 				reply = tcp.getMessage(getBaseContext(), getTargetIp(), 44558, "CLOCK:PLAYING");
 
@@ -214,7 +232,7 @@ public class ClockControlActivity extends Activity {
 						if ((reply != null) && (reply.length() > 0) && (!reply.equals(txtPlaying.getText()))) 
 							txtPlaying.setText(reply);
 					}
-				});
+				});			
 				
 				try {
             		Thread.sleep(time);
@@ -235,7 +253,8 @@ public class ClockControlActivity extends Activity {
 
 		rbtnClock1.setText(prefs.getString("clock1_name", (String) rbtnClock1.getText()));
 		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
-
+		
+		radioStations = "";
 		running = true;
 		thread = new Thread(runnable);
 		thread.start();
@@ -309,6 +328,7 @@ public class ClockControlActivity extends Activity {
 
     	running = false;
 		thread.interrupt();
+		radioStations = "";
 		running = true;
 		thread = new Thread(runnable);
 		thread.start();

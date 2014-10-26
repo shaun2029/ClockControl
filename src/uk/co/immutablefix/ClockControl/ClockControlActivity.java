@@ -120,6 +120,16 @@ public class ClockControlActivity extends Activity {
 			}
 		});	
 
+	    Button btnDisplay = (Button) findViewById(R.id.btn_display);
+	    btnDisplay.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				sendCommand(44558, "CLOCK:DISPLAY:TOGGLE");
+				//  Log.d("Events", "Meditation");
+			}
+		});	
+	    
 	    Button btnPause = (Button) findViewById(R.id.btn_pause);
 	    btnPause.setOnClickListener(new View.OnClickListener() {
 			
@@ -163,7 +173,7 @@ public class ClockControlActivity extends Activity {
 	    
 		@Override
 		public void run() {
-			int time = 3000;
+			int time = 1000;
 			
 			while (running) {
 				//Log.d("TREAD", "Tick ...");

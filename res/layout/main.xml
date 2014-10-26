@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.50"
             android:text="Play/Pause"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/btn_next"
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.50"
             android:text="Next Song"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Music"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/btn_sleep"
@@ -77,7 +77,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Sleep"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -90,7 +90,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Meditation"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/btn_radio"
@@ -98,9 +98,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Radio"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Display"
+        android:textSize="20sp" />
 
     <LinearLayout
         android:layout_width="match_parent"

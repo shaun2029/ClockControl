@@ -63,7 +63,6 @@
             android:id="@+id/btn_music"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.50"
             android:text="Music"
             android:textSize="24sp" />
 
@@ -71,8 +70,6 @@
             android:id="@+id/btn_sleep"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_weight="0.50"
             android:text="Sleep"
             android:textSize="24sp" />
 
@@ -80,20 +77,24 @@
             android:id="@+id/btn_meditation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_weight="0.50"
             android:text="Meditation"
             android:textSize="24sp" />
 
         <Button
-            android:id="@+id/Button01"
-            android:layout_width="wrap_content"
+            android:id="@+id/btn_radio"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.50"
             android:text="Radio"
             android:textSize="24sp" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Display"
+        android:textSize="24sp" />
 
     <LinearLayout
         android:layout_width="match_parent"

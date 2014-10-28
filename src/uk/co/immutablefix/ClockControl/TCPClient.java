@@ -19,6 +19,7 @@ public class TCPClient extends Object{
     Socket s = null;
     BufferedWriter out = null;
     int timeout = 15000;
+    android.net.wifi.WifiManager.MulticastLock lock = null;
     
 	
 	public void setTimeout(int milli) {
@@ -118,5 +119,22 @@ public class TCPClient extends Object{
 			}
 		}
 		return replyStr;
+	}
+
+	public synchronized void acquireMulticastLock(Context context) {
+		if (lock == null) {		
+			// Get multicast lock.
+			android.net.wifi.WifiManager wifi = (android.net.wifi.WifiManager) context.getSystemService(android.content.Context.WIFI_SERVICE);
+			lock = wifi.createMulticastLock("clockcontrolmulticastlock");
+			lock.setReferenceCounted(true);
+			lock.acquire();
+		}
+	}
+
+	public synchronized void releaseMulticastLock() {
+		if (lock == null) {		
+			lock.release();
+			lock = null;
+		}
 	}
 }

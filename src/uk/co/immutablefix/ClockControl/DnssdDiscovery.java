@@ -39,80 +39,65 @@ public class DnssdDiscovery extends Object {
     }
     
     public synchronized String getHostAddress(String host) {
-    	String address = host;
+		String address = host;
+		// Search cache.
+		int i = hostnames.indexOf(host);
+		if (i >= 0) {
+			return ipAdresses.get(i);
+		}
+		byte[] header = new byte[] { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
+		byte[] footer = new byte[] { 0x05, 0x6c, 0x6f, 0x63, 0x61, 0x6c, 0, 0, 1, 0, 1 };
+		byte[] reply = new byte[1500];
 		
-    	if ((address == null) || (address == "")) {
-			return "";
-		}    	
-    	
-    	// Search cache.
-    	int i = hostnames.indexOf(host);
-    	
-   	    if (i >= 0) {
-    	    return ipAdresses.get(i); 
-    	}
-   	    
-    	byte[] header = new byte[] { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
-    	byte[] footer = new byte[] { 0x05, 0x6c, 0x6f, 0x63, 0x61, 0x6c, 0, 0, 1, 0, 1 };
-        byte[] reply = new byte[1500];
-       
-        if (!host.contains(".local")) {
-        	host.concat(".local");	
-        }
-
-        int hostLen = host.length();
-
-        // Get multicast lock.
-        android.net.wifi.WifiManager wifi = (android.net.wifi.WifiManager) context.getSystemService(android.content.Context.WIFI_SERVICE);
-        lock = wifi.createMulticastLock("clockcontrolmulticastlock");
-        lock.setReferenceCounted(true);
-        lock.acquire();
-        
+		if (!host.contains(".local"))
+			host = host + ".local";
+		
+		int hostLen = host.indexOf(".local");
+		// Get multicast lock.
+		
+		android.net.wifi.WifiManager wifi = (android.net.wifi.WifiManager) context
+				.getSystemService(android.content.Context.WIFI_SERVICE);
+		lock = wifi.createMulticastLock("clockcontrolmulticastlock");
+		lock.setReferenceCounted(true);
+		lock.acquire();
 		try {
-	        // Build mDND request packet.
+			// Build mDND request packet.
 			ByteArrayOutputStream buf = new ByteArrayOutputStream();
-	        buf.write(header);
-
-	    	buf.write(hostLen);
-	        
-	        for (i = 0; i < hostLen; i++)
-	        {
-	        	buf.write(host.charAt(i));
-	        }
-	        
-	        buf.write(footer);
-
+			buf.write(header);
+			buf.write(hostLen);
+			for (i = 0; i < hostLen; i++) {
+				buf.write(host.charAt(i));
+			}
+			
+			buf.write(footer);
+			
 			MulticastSocket s = new MulticastSocket();
-
 			DatagramPacket replyPacket = new DatagramPacket(reply, reply.length);
-			DatagramPacket sendPacket = new DatagramPacket(buf.toByteArray(), buf.size(), 
-					InetAddress.getByName("224.0.0.251"), 5353);
-		
+			DatagramPacket sendPacket = new DatagramPacket(buf.toByteArray(),
+					buf.size(), InetAddress.getByName("224.0.0.251"), 5353);
+			
 			s.setTimeToLive(255);
 			s.setSoTimeout(1000);
-			
 			s.send(sendPacket);
-			s.receive(replyPacket);			
+			s.receive(replyPacket);
 			
 			address = replyPacket.getAddress().getHostAddress();
 			
 			// Cache host info.
-        	hostnames.add(host);
-        	ipAdresses.add(address);
-        	
-	        s.close();
+			hostnames.add(host);
+			ipAdresses.add(address);
+			
+			s.close();
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		lock.release();
-    	
-    	return address;
-    }
-    
+		return address;
+    }    
     public synchronized String[] getHostList() {
     	String request = "REQUEST:CLOCKNAME";
     	String[] result = new String[]{""}; 

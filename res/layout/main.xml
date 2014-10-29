@@ -102,13 +102,6 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_display"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Display"
-        android:textSize="20sp" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -118,20 +111,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            <RadioButton
-                android:id="@+id/radioButton1"
+            <ListView
+                android:id="@+id/lstClocks"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="Clock 1"
-                android:textSize="24sp" />
+                android:layout_height="fill_parent"
+                android:layout_marginTop="4dp"
+                android:layout_weight="1" >
 
-            <RadioButton
-                android:id="@+id/radioButton2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Clock 2"
-                android:textSize="24sp" />
+            </ListView>
+
         </RadioGroup>
     </LinearLayout>
 

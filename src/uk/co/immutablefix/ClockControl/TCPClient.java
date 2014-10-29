@@ -71,6 +71,10 @@ public class TCPClient extends Object{
 		String replyStr = "";
 		String response = "";
 		InetAddress serverIP = null;
+		
+		if ((address == null) || (address == "")) {
+			return "";
+		}
 
 		try {
 			serverIP = InetAddress.getByName(address);

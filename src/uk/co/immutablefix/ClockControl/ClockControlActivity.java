@@ -1,21 +1,23 @@
 // Copyright 2012 Shaun Simpson shauns2029@gmail.com
 
 package uk.co.immutablefix.ClockControl;
+
 import uk.co.immutablefix.ClockControl.StationPickerActivity;
-import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.RadioButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +25,8 @@ public class ClockControlActivity extends Activity {
 	private static final int GET_RADIO_STATION = 3007;
 	
 	String hosts = "";
-	String[] clocks = null;	
+	String[] clocks = null;
+	ArrayAdapter<String> clocksAdapter = null;
 
 	String hostname = "";
 	String weather = "";
@@ -36,7 +39,7 @@ public class ClockControlActivity extends Activity {
 	TCPClient tcp;
 	
 	Button btnVolDown, btnVolUp;
-	//RadioButton rbtnClock1, rbtnClock2;
+	ListView lstClocks;
 	TextView txtPlaying;
 	SharedPreferences prefs = null;
 	
@@ -99,7 +102,6 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				sendCommand(44558, "CLOCK:SLEEP");
-				//  Log.d("Events", "Sleep");
 			}
 		});	
 	
@@ -109,7 +111,6 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				sendCommand(44558, "CLOCK:MEDITATION");
-				//  Log.d("Events", "Meditation");
 			}
 		});	
 
@@ -122,16 +123,6 @@ public class ClockControlActivity extends Activity {
 			}
 		});	
 
-	    Button btnDisplay = (Button) findViewById(R.id.btn_display);
-	    btnDisplay.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				sendCommand(44558, "CLOCK:DISPLAY:TOGGLE");
-				//  Log.d("Events", "Meditation");
-			}
-		});	
-	    
 	    Button btnPause = (Button) findViewById(R.id.btn_pause);
 	    btnPause.setOnClickListener(new View.OnClickListener() {
 			
@@ -142,32 +133,23 @@ public class ClockControlActivity extends Activity {
 
 			}
 		});	
+
+	    lstClocks = (ListView) findViewById(R.id.lstClocks);
+
+	    lstClocks.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+					long arg3) {
+				updatePlaying(position);
+			}
+		});
 /*	    
-	    rbtnClock1 = (RadioButton) findViewById(R.id.radioButton1);
-	    rbtnClock2 = (RadioButton) findViewById(R.id.radioButton2);	    
-	    
-		prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-		
-		rbtnClock1.setText(prefs.getString("clock1_name", (String) rbtnClock1.getText()));
-		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
-	
-	    rbtnClock1.setOnClickListener(new View.OnClickListener() {	
-			@Override
-			public void onClick(View v) {
-				updatePlaying();
-			}
-		});			
-	    
-	    rbtnClock2.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				updatePlaying();
-			}
-		});	
-*/
-		//  Log.d("Events", "Starting ... Fin");
-     }
+        clocksAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, clocks);
+
+        lstClocks.setAdapter(clocksAdapter);
+*/        
+    }
 
 	private void launchStationPicker() {
 		if (radioStations != "") {
@@ -178,44 +160,7 @@ public class ClockControlActivity extends Activity {
 			sendCommand(44558, "CLOCK:RADIO:TOGGLE" + String.valueOf(radioChannel));
 		}
 	}
-/*
-	private String[] getClocks() {
-    	TCPClient tcp2;
-        tcp2 = new TCPClient();
-        tcp2.setTimeout(10000);
 
-		Runnable runnable = new Runnable() {
-		    String reply;
-		    
-			@Override
-			public void run() {
-					tcp.acquireMulticastLock(getBaseContext());
-					reply = tcp.getMessage(getBaseContext(), "192.168.0.72", 44558, "CLOCK:DISCOVER");
-					tcp.releaseMulticastLock();
-
-					handler.post(new Runnable() {
-						@Override
-						public void run() {
-							if ((reply != null) && (reply.length() > 0) && (!reply.equals(txtPlaying.getText()))) 
-								hosts = reply;
-						}
-					});			
-				
-				return;
-			}
-		};
-		
-		runnable.run();
-		try {
-			runnable.wait();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return hosts.split(System.getProperty("line.separator"));
-	}
-*/	
 	// Listen for results.
 	@Override  
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -237,7 +182,7 @@ public class ClockControlActivity extends Activity {
     final Handler stationHandler = new Handler();
     final Handler clocksHandler = new Handler();
     Runnable runnable = new Runnable() {
-	    String reply, stationReply, clocksReply;
+	    String reply, stationReply;
 	    
 		@Override
 		public void run() {
@@ -262,7 +207,6 @@ public class ClockControlActivity extends Activity {
 						});
 					}
 				
-					//  Log.d("TREAD", "Getting data ...");
 					reply = tcp.getMessage(getBaseContext(), targetIP, 44558, "CLOCK:PLAYING");
 	
 					handler.post(new Runnable() {
@@ -273,17 +217,13 @@ public class ClockControlActivity extends Activity {
 						}
 					});			
 				} else {
-					time = 3000;
-					//  Log.d("TREAD", "Getting data ...");
-					tcp.acquireMulticastLock(getBaseContext());
-					clocksReply = tcp.getMessage(getBaseContext(), "192.168.255.255", 44558, "CLOCK:DISCOVER");
-					tcp.releaseMulticastLock();
-					
+					clocks = dns.getHostList();
+
 					clocksHandler.post(new Runnable() {
 						@Override
 						public void run() {
-							if ((clocksReply != null) && (clocksReply.length() > 0)) 
-								clocks = clocksReply.split(System.getProperty("line.separator"));
+							if ((clocks != null) && (clocks.length > 0)) 
+								updateClocksList();
 						}
 					});			
 				}
@@ -303,11 +243,8 @@ public class ClockControlActivity extends Activity {
     public void onStart()
     {
     	super.onStart();
-/*
-		rbtnClock1.setText(prefs.getString("clock1_name", (String) rbtnClock1.getText()));
-		rbtnClock2.setText(prefs.getString("clock2_name", (String) rbtnClock2.getText()));
-*/		
-		radioStations = "";
+
+    	radioStations = "";
 		running = true;
 		thread = new Thread(runnable);
 		thread.start();
@@ -327,7 +264,7 @@ public class ClockControlActivity extends Activity {
     	thread = new Thread(runnable);
     	thread.start();
     }
-    
+/*    
     //Creates menus
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -348,7 +285,7 @@ public class ClockControlActivity extends Activity {
     	
     	return false;
     }    
-  
+*/  
     @Override
     public void onDestroy(){
     	super.onDestroy();
@@ -369,29 +306,40 @@ public class ClockControlActivity extends Activity {
 	}
     
 	private String getTargetIp() {
-/*
-    	if (rbtnClock1.isChecked())
-    		hostname = prefs.getString("clock1_address", hostname).toLowerCase(Locale.getDefault());
-    	else
-    		hostname = prefs.getString("clock2_address", hostname).toLowerCase(Locale.getDefault());
-*/
-		if (clocks != null)
-		{
+		String address = "";
+		
+		if (clocks != null) {
 		   hostname = clocks[0];
+		} else {
+			hostname = null;
+		}
+		   
+		if (hostname != null) {
+			address = dns.getHostAddress(hostname);
 		}
 
-	   return dns.getHostAddress(hostname);
+		return address;
     }
 
-	private void updatePlaying() {
-		txtPlaying.setText("Updating ...");
-
+	private void updateClocksList() {
+		if (clocks != null) {
+			clocksAdapter = new ArrayAdapter<String>(this,
+			        android.R.layout.simple_list_item_1, clocks);
+			lstClocks.setAdapter(clocksAdapter);
+		}
+	}
+	
+	private void updatePlaying(int index) {
+		hostname = lstClocks.getItemAtPosition(index).toString();
+		
     	running = false;
 		thread.interrupt();
 		radioStations = "";
 		running = true;
 		thread = new Thread(runnable);
 		thread.start();
+
+		txtPlaying.setText(hostname);
 	}
 	
 	private void sendCommand(final int port, final String command) {

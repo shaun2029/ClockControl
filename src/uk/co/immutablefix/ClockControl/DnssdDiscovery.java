@@ -10,6 +10,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
@@ -105,8 +106,6 @@ public class DnssdDiscovery extends Object {
     	String clockName;
         int requestLen = request.length();
     	
-//		byte[] header = new byte[] { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
-//		byte[] footer = new byte[] { 0x05, 0x6c, 0x6f, 0x63, 0x61, 0x6c, 0, 0, 1, 0, 1 };
 	    byte[] reply = new byte[1500];
 	
 	    // Get multicast lock.
@@ -167,9 +166,12 @@ public class DnssdDiscovery extends Object {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
 		lock.release();
+
+		Collections.sort(clocks.subList(1, clocks.size()));
 		clocks.toArray(result);
+		
 		return result;
     }
 }

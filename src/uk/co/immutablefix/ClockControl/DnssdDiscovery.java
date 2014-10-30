@@ -101,7 +101,6 @@ public class DnssdDiscovery extends Object {
     }    
     public synchronized String[] getHostList() {
     	String request = "REQUEST:CLOCKNAME";
-    	String[] result = new String[]{""}; 
     	ArrayList<String> clocks = new ArrayList<String>();
     	String clockName;
         int requestLen = request.length();
@@ -169,7 +168,8 @@ public class DnssdDiscovery extends Object {
 		
 		lock.release();
 
-		Collections.sort(clocks.subList(1, clocks.size()));
+		Collections.sort(clocks);
+		String[] result = new String[clocks.size()];
 		clocks.toArray(result);
 		
 		return result;

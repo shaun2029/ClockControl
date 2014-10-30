@@ -305,12 +305,6 @@ public class ClockControlActivity extends Activity {
 	private String getTargetIp() {
 		String address = "";
 		
-		if (clocks != null) {
-		   hostname = clocks[0];
-		} else {
-			hostname = null;
-		}
-		   
 		if (hostname != null) {
 			address = dns.getHostAddress(hostname);
 		}

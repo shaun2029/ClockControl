@@ -30,11 +30,14 @@ public class TCPClient extends Object{
 		String response = "";
 		InetAddress serverIP = null;
 		
+		if (address == "") {
+			return;
+		}
+		
 		try {
 			serverIP = InetAddress.getByName(address);
 		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			return;
 		}
 		
 		if (serverIP != null){

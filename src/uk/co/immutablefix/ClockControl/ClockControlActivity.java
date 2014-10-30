@@ -21,11 +21,10 @@ import android.widget.Toast;
 public class ClockControlActivity extends Activity {
 	private static final int GET_RADIO_STATION = 3007;
 	
-	String hosts = "";
 	String[] clocks = null;
 	ArrayAdapter<String> clocksAdapter = null;
 
-	String hostname = "";
+	String hostAddress = "";
 	String weather = "";
 	String radioStations = "";
 	Boolean running = true;
@@ -54,9 +53,9 @@ public class ClockControlActivity extends Activity {
         tcp = new TCPClient();
         tcp.setTimeout(1000);
         
-        //  Log.d("Events", "Starting ... ");
+    	txtPlaying = (TextView) findViewById(R.id.txt_playing);	   
+    	txtPlaying.setText("Seclect a clock form the selection below");
     	
-    	txtPlaying = (TextView) findViewById(R.id.txt_playing);	    
         btnVolUp = (Button) findViewById(R.id.btn_volumeup);
 	    btnVolUp.setOnClickListener(new View.OnClickListener() {
 			
@@ -126,8 +125,6 @@ public class ClockControlActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				sendCommand(44558, "CLOCK:PAUSE");
-				//  Log.d("Events", "Sleep");
-
 			}
 		});	
 
@@ -140,12 +137,6 @@ public class ClockControlActivity extends Activity {
 				updatePlaying(position);
 			}
 		});
-/*	    
-        clocksAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, clocks);
-
-        lstClocks.setAdapter(clocksAdapter);
-*/        
     }
 
 	private void launchStationPicker() {
@@ -184,16 +175,13 @@ public class ClockControlActivity extends Activity {
 		@Override
 		public void run() {
 			int time = 500;
-			String targetIP = "";
 			
 			while (running) {
-				targetIP = getTargetIp();
-				
-				if (targetIP != "") {
+				if (hostAddress != "") {
 					time = 500;
 					
 					if (radioStations == "") {
-						stationReply = tcp.getMessage(getBaseContext(), targetIP, 44558, "CLOCK:GET:RADIOSTATIONS");
+						stationReply = tcp.getMessage(getBaseContext(), hostAddress, 44558, "CLOCK:GET:RADIOSTATIONS");
 		
 						stationHandler.post(new Runnable() {
 							@Override
@@ -204,7 +192,7 @@ public class ClockControlActivity extends Activity {
 						});
 					}
 				
-					reply = tcp.getMessage(getBaseContext(), targetIP, 44558, "CLOCK:PLAYING");
+					reply = tcp.getMessage(getBaseContext(), hostAddress, 44558, "CLOCK:PLAYING");
 	
 					handler.post(new Runnable() {
 						@Override
@@ -214,23 +202,27 @@ public class ClockControlActivity extends Activity {
 						}
 					});			
 				} else {
-					clocks = dns.getHostList();
-
-					clocksHandler.post(new Runnable() {
-						@Override
-						public void run() {
-							if ((clocks != null) && (clocks.length > 0)) 
-								updateClocksList();
-						}
-					});			
-				}
+					time = 1000;
 					
+					String[] newClocks = dns.getHostList();
+					if (clocks != newClocks) {
+						clocks = newClocks;
+						clocksHandler.post(new Runnable() {
+							@Override
+							public void run() {
+								if ((clocks != null) && (clocks.length > 0)) 
+									updateClocksList();
+							}
+						});			
+					}
+				}
+
 				try {
             		Thread.sleep(time);
                 } catch (InterruptedException e1) {
                 	// TODO Auto-generated catch block
                 	e1.printStackTrace();
-                }	
+                }
 			}
 			
 			return;
@@ -302,16 +294,6 @@ public class ClockControlActivity extends Activity {
 		}
 	}
     
-	private String getTargetIp() {
-		String address = "";
-		
-		if (hostname != null) {
-			address = dns.getHostAddress(hostname);
-		}
-
-		return address;
-    }
-
 	private void updateClocksList() {
 		if (clocks != null) {
 			clocksAdapter = new ArrayAdapter<String>(this,
@@ -321,7 +303,7 @@ public class ClockControlActivity extends Activity {
 	}
 	
 	private void updatePlaying(int index) {
-		hostname = lstClocks.getItemAtPosition(index).toString();
+		hostAddress = dns.getHostAddress(lstClocks.getItemAtPosition(index).toString());
 		
     	running = false;
 		thread.interrupt();
@@ -330,14 +312,14 @@ public class ClockControlActivity extends Activity {
 		thread = new Thread(runnable);
 		thread.start();
 
-		txtPlaying.setText(hostname);
+		txtPlaying.setText("");
 	}
 	
 	private void sendCommand(final int port, final String command) {
 	    Runnable runnable = new Runnable() {
 			@Override
 			public void run() {
-				tcp.sendMessage(getTargetIp(), port, command);
+				tcp.sendMessage(hostAddress, port, command);
 				return;
 			}
 	    };

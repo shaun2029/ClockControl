@@ -101,7 +101,7 @@ public class DnssdDiscovery extends Object {
     }    
     public synchronized String[] getHostList() {
     	String request = "REQUEST:CLOCKNAME";
-    	ArrayList<String> clocks = new ArrayList<String>();
+    	String address = "";
     	String clockName;
         int requestLen = request.length();
     	
@@ -129,7 +129,7 @@ public class DnssdDiscovery extends Object {
 					InetAddress.getByName("255.255.255.255"), 44557);
 		
 			s.setTimeToLive(255);
-			s.setSoTimeout(2000);
+			s.setSoTimeout(500);
 			
 			s.send(sendPacket);
 			
@@ -142,18 +142,20 @@ public class DnssdDiscovery extends Object {
 					break;
 				}	
 				
-				clockName = new String(reply, "UTF-8");
-				if (clockName.startsWith("CLOCKNAME:")) {
-					String[] parts = clockName.split(":");
-
-					if (parts.length > 1) {
-						clocks.add(parts[1]);
-						
-						String address = replyPacket.getAddress().getHostAddress();
-						
-						// Cache host info.
-			        	hostnames.add(parts[1]);
-			        	ipAdresses.add(address);						
+				address = replyPacket.getAddress().getHostAddress();
+				
+				// Add host if not already in the list
+				int i = ipAdresses.indexOf(address);
+				if (i < 0) {
+					clockName = new String(reply, "UTF-8");
+					if (clockName.startsWith("CLOCKNAME:")) {
+						String[] parts = clockName.split(":");
+		
+						if (parts.length > 1) {
+							// Cache host info.
+				        	hostnames.add(parts[1]);
+				        	ipAdresses.add(address);						
+						}
 					}
 				}
 			}
@@ -168,9 +170,9 @@ public class DnssdDiscovery extends Object {
 		
 		lock.release();
 
-		Collections.sort(clocks);
-		String[] result = new String[clocks.size()];
-		clocks.toArray(result);
+		Collections.sort(hostnames);
+		String[] result = new String[hostnames.size()];
+		hostnames.toArray(result);
 		
 		return result;
     }

@@ -31,7 +31,7 @@ public class StationPickerActivity extends ListActivity  {
         // Third - the Array of data
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, values);
+                R.layout.list_item, values);
 
 
         // Assign adapter to List

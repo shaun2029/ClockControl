@@ -37,6 +37,7 @@ public class ClockControlActivity extends Activity {
 	Button btnVolDown, btnVolUp;
 	ListView lstClocks;
 	TextView txtPlaying;
+	TextView txtClockName;
 	SharedPreferences prefs = null;
 	
 	Thread thread = null;
@@ -53,8 +54,11 @@ public class ClockControlActivity extends Activity {
         tcp = new TCPClient();
         tcp.setTimeout(1000);
         
+    	txtClockName = (TextView) findViewById(R.id.txt_clockname);	   
+    	txtClockName.setText("Select Clock");
+
     	txtPlaying = (TextView) findViewById(R.id.txt_playing);	   
-    	txtPlaying.setText("Seclect a clock form the selection below");
+    	txtPlaying.setText("Searching for clocks ...");
     	
         btnVolUp = (Button) findViewById(R.id.btn_volumeup);
 	    btnVolUp.setOnClickListener(new View.OnClickListener() {
@@ -204,16 +208,18 @@ public class ClockControlActivity extends Activity {
 				} else {
 					time = 1000;
 					
-					String[] newClocks = dns.getHostList();
-					if (clocks != newClocks) {
-						clocks = newClocks;
-						clocksHandler.post(new Runnable() {
-							@Override
-							public void run() {
-								if ((clocks != null) && (clocks.length > 0)) 
-									updateClocksList();
-							}
-						});			
+					if (clocks == null) {
+						String[] newClocks = dns.getHostList();
+						if (clocks != newClocks) {
+							clocks = newClocks;
+							clocksHandler.post(new Runnable() {
+								@Override
+								public void run() {
+									if ((clocks != null) && (clocks.length > 0)) 
+										updateClocksList();
+								}
+							});			
+						}
 					}
 				}
 
@@ -297,12 +303,15 @@ public class ClockControlActivity extends Activity {
 	private void updateClocksList() {
 		if (clocks != null) {
 			clocksAdapter = new ArrayAdapter<String>(this,
-			        android.R.layout.simple_list_item_1, clocks);
+			        R.layout.list_item, clocks);
 			lstClocks.setAdapter(clocksAdapter);
+
+	    	txtPlaying.setText("Select a clock from the selection at the bottom of the screen");
 		}
 	}
 	
 	private void updatePlaying(int index) {
+		txtClockName.setText(lstClocks.getItemAtPosition(index).toString());
 		hostAddress = dns.getHostAddress(lstClocks.getItemAtPosition(index).toString());
 		
     	running = false;

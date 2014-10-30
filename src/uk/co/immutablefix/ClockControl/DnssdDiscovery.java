@@ -170,9 +170,11 @@ public class DnssdDiscovery extends Object {
 		
 		lock.release();
 
-		Collections.sort(hostnames);
-		String[] result = new String[hostnames.size()];
-		hostnames.toArray(result);
+		ArrayList<String> clocks = new ArrayList<String>(hostnames);
+		Collections.sort(clocks);
+		
+		String[] result = new String[clocks.size()];
+		clocks.toArray(result);
 		
 		return result;
     }

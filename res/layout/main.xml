@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="320dp"
-    android:layout_height="420dp"
+    android:layout_height="500dp"
     android:layout_gravity="center"
     android:orientation="vertical"
-    android:padding="5dp" >
+    android:padding="4dp" >
 
+    <TextView
+        android:id="@+id/txt_clockname"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:text="Select Clock"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+    
     <TextView
         android:id="@+id/txt_playing"
         android:layout_width="match_parent"
         android:layout_height="66dp"
         android:text="Updating ..."
+        android:textSize="18sp"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <LinearLayout
@@ -105,18 +115,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:textSize="21sp" >
 
         <RadioGroup
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:textSize="21sp" >
 
             <ListView
                 android:id="@+id/lstClocks"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:layout_marginTop="4dp"
-                android:layout_weight="1" >
+                android:layout_weight="1"
+                android:textSize="21sp" >
 
             </ListView>
 

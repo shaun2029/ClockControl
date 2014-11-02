@@ -178,12 +178,11 @@ public class ClockControlActivity extends Activity {
 	    
 		@Override
 		public void run() {
-			int time = 500;
+			final int delayTime = 500;
+			int clockTimeout = 250;
 			
 			while (running) {
 				if (hostAddress != "") {
-					time = 500;
-					
 					if (radioStations == "") {
 						stationReply = tcp.getMessage(getBaseContext(), hostAddress, 44558, "CLOCK:GET:RADIOSTATIONS");
 		
@@ -206,25 +205,25 @@ public class ClockControlActivity extends Activity {
 						}
 					});			
 				} else {
-					time = 1000;
-					
-					if (clocks == null) {
-						String[] newClocks = dns.getHostList();
-						if (clocks != newClocks) {
-							clocks = newClocks;
-							clocksHandler.post(new Runnable() {
-								@Override
-								public void run() {
-									if ((clocks != null) && (clocks.length > 0)) 
-										updateClocksList();
-								}
-							});			
-						}
+					String[] newClocks = dns.getHostList(clockTimeout);
+					if (clocks != newClocks) {
+						clocks = newClocks;
+						clocksHandler.post(new Runnable() {
+							@Override
+							public void run() {
+								if ((clocks != null) && (clocks.length > 0)) 
+									updateClocksList();
+							}
+						});			
 					}
+
+					// Increase timeout to find slow clocks
+					clockTimeout += 250;
+					if (clockTimeout > 3000) clockTimeout = 3000;
 				}
 
 				try {
-            		Thread.sleep(time);
+            		Thread.sleep(delayTime);
                 } catch (InterruptedException e1) {
                 	// TODO Auto-generated catch block
                 	e1.printStackTrace();

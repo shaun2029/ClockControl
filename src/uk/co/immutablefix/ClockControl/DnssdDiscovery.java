@@ -99,7 +99,7 @@ public class DnssdDiscovery extends Object {
 		lock.release();
 		return address;
     }    
-    public synchronized String[] getHostList() {
+    public synchronized String[] getHostList(int timeout) {
     	String request = "REQUEST:CLOCKNAME";
     	String address = "";
     	String clockName;
@@ -129,8 +129,9 @@ public class DnssdDiscovery extends Object {
 					InetAddress.getByName("255.255.255.255"), 44557);
 		
 			s.setTimeToLive(255);
-			s.setSoTimeout(500);
+			s.setSoTimeout(timeout);
 			
+			s.send(sendPacket);
 			s.send(sendPacket);
 			
 			while (true) {
@@ -156,6 +157,7 @@ public class DnssdDiscovery extends Object {
 				        	hostnames.add(parts[1]);
 				        	ipAdresses.add(address);						
 						}
+						s.send(sendPacket);
 					}
 				}
 			}
